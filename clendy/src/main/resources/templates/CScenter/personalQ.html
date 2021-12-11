@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://www.thymeleaf.org"
+                xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1:1문의</title>
+    <script src="/js/jquery-3.6.0.min.js"></script> 
+	<link rel="stylesheet" href="/css/CScenter/personalQ.css">
+    <link rel="stylesheet" href="/css/common/paging.css">
+    <link rel="stylesheet" href="/css/common/sidebar.css">
+    <!-- 삭제 여부 알림창 -->
+	<script>
+		const msg = '[[${ msg }]]';
+		
+		if(msg){
+			alert(msg);
+		}
+	</script>
+</head>
+<body>
+    <div th:replace="common/header.html"></div>
+
+    <div id="wrapper">
+        <div id="sidebar">
+            <ul>
+                <li><a class="sideA " href="/CScenter/FAQ">FAQ</a></li>
+                <li><a class="sideA " href="/CScenter/board">공지사항</a></li>
+                <li><a class="sideA current" href="/CScenter/personalQ">1:1문의</a></li>
+            </ul>
+        </div>
+        <div id="content">
+            <h3 id="content-title">1:1 문의</h3><h6>1:1 Q&A</h6>
+			
+			
+            <div class="btn-area"><a class="insert-btn" href="/CScenter/personalQ/insertQuestion">등록</a></div>
+        	
+            
+            <div class="board-wrapper">
+                <div class="list-th">
+                    <ul><li class="list-num">번호</li><li class="list-category">카테고리</li><li class="list-title">제목</li><li class="list-date">등록일</li><li class="list-status">상태</li></ul></div>
+                	<th:block th:if ="${#lists.size(personalQList) == 0}" >
+	                	<div class="board-list null">
+		                	<img class="nowish" src="/images/nowish.png"><br>
+	            			<span>등록된 1:1문의가 없습니다.</span>
+	                	</div>
+                	</th:block>
+                	<th:block th:if="${#lists.size(personalQList) > 0}">
+	                	<div class="board-list" th:each="p,i : ${personalQList}">
+	                    <input type="hidden" name="p_no" th:value="${p.p_no}">
+	                    <ul><li class="list-num" th:text="${(pi.listCount-(10*(pi.page-1))) - (i.count-1) }"></li>
+	                    <li class="list-category" th:text="${p.qc_name}"></li>
+	                    <li class="list-title cursor" th:text="${p.p_title}"></li>
+	                    <li class="list-date" th:text="${#dates.format(p.p_enroll_date, 'yyyy-MM-dd')}"></li>
+	                    <li class="list-status" th:if="${p.p_answer_date == null}"><span>답변 대기</span></li>
+	                    <li class="list-status" th:if="${p.p_answer_date != null}"><span>답변 완료</span></li>
+	                    </ul>      
+                	</div>
+                	</th:block>
+                </div>
+
+            <!-- 페이징 -->
+            <div class="pagaing_wrap" th:if="${#lists.size(personalQList) > 0}">
+                        <ul class="pagaing_left">
+                            <li class="allPrev" th:classappend="${pi.page == 1} ? 'hide'">
+                            	<a th:href="@{/CScenter/personalQ/(page=1)}" th:if="${pi.page > 1}"></a>
+	                            <a href="javascript:;" th:unless="${pi.page > 1}"></a>
+                            </li>
+                            <li class="prev" th:classappend="${pi.page == 1} ? 'hide'">
+	                            <a th:href="@{/CScenter/personalQ/(page=${pi.page - 1})}" th:if="${pi.page > 1}"></a>
+                            	<a href="javascript:;" th:unless="${pi.page > 1}"></a>
+                            </li>
+                        </ul>
+                        
+                        <ul class="pagaing_num">
+                        	<th:block th:each="pd : ${#numbers.sequence(pi.startPage, pi.endPage)}">
+                        		<li th:classappend="${pi.page == pdStat.current} ? 'on'">
+                        			<a th:href="@{/CScenter/personalQ/(page=${pdStat.current})}" th:text="${pdStat.current}"></a>
+                        		</li>
+                        	</th:block>
+                            
+                        </ul>
+
+                        <ul class="pagaing_right" >
+                            <li class="next" th:classappend="${pi.page == pi.maxPage} ? 'hide'">
+                            	<a th:href="@{/CScenter/personalQ/(page=${pi.page} + 1)}" th:if="${pi.page < pi.maxPage}"></a>
+                            	<a href="javascript:;" th:unless="${pi.page < pi.maxPage}"></a>
+                            </li>
+                            <li class="allNext"  th:classappend="${pi.page == pi.maxPage} ? 'hide'">
+                            	<a th:href="@{/CScenter/personalQ/(page=${pi.maxPage})}" th:if="${pi.page < pi.maxPage}"></a>
+                            	<a href="javascript:;" th:unless="${pi.page < pi.maxPage}"></a>
+                            </li>
+                        </ul>
+                    </div>
+        </div>
+
+    </div>
+
+   <div th:replace="common/footer.html"></div>
+   
+   <script>
+     /* 상세페이지로 이동 */
+     $(".list-title").click(function(){
+    	 var p_no = $(this).parent().prev().val();
+    	  location.href="/CScenter/personalQ/detail?p_no="+p_no;
+     });
+     </script>
+</body>
+</html>

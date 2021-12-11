@@ -1,0 +1,167 @@
+div{
+    borde : 1px solid black;
+}
+
+span{
+    borde : 1px solid black;
+    font-weight: bold;
+}
+
+.title {
+    display: flex;
+    width: 500px;
+    font-size: 40px;
+    justify-content: center;
+    margin: auto;
+    color: #060032;
+    padding: 10px;
+    border-bottom: 4px solid #060032;
+}
+
+.logo {
+    margin-right: 15px;
+    width: 48px;
+}
+
+.joinForm {
+    width: 500px;
+    margin:auto;
+    margin-top: 40px;
+}
+
+.joinForm div {
+    margin-bottom: 10px;
+}
+
+form div div {
+    margin-top: 5px;
+}
+
+form > div {
+    margin-left: 80px;
+}
+
+.area input {
+    width: 280px;
+}
+
+.required {
+    color: red;
+}
+
+input {
+    height: 30px;
+    padding-left: 10px;
+}
+
+.id_view input{
+    background-color: #E5E5E5;
+    border: none;
+    font-size: large;
+}
+
+.pwd_img{
+    width: 20px;
+    vertical-align: middle;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+#pwd1Confirm{
+	color: red;
+	font-size: small;
+}
+
+#pwd1_img {
+	margin-left : 10px;
+	width:20px;
+}
+
+#pwd2Confirm{
+	color: red;
+	font-size: small;
+}
+
+#pwd2_img {
+	margin-left : 10px;
+	width:20px;
+}
+
+.name_view input{
+    background-color: #E5E5E5;
+    border: none;
+    font-size: large;
+}
+
+#emailConfirm {
+	margin-left : 10px;
+	color: red;
+	font-size: small;
+}
+
+#e_confirm_img {
+	margin-left : 5px;
+	width:20px;
+}
+
+#phoneConfirm {
+	margin-left : 10px;
+	color: red;
+	font-size: small;
+}
+
+#p_confirm_img {
+	margin-left : 5px;
+	width:20px;
+}
+
+#phoneCheck {
+	background-color: #060032;
+    color: white;
+    width: 70px;
+    height: 30px;
+    border: none;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+#postcodify_search_button{
+    background-color: #060032;
+    color: white;
+    width: 70px;
+    height: 30px;
+    border: none;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+.gender_area {
+    margin-top: 20px;
+}
+
+.bodySize_input_area span {
+    margin-right: 10px;
+}
+
+.bodySize_input_area input {
+    width: 80px;
+}
+
+.btn_area{
+    margin-top: 50px;
+    text-align: center;
+}
+
+.btn_area button {
+    background-color: #060032;
+    color :white;
+    border: none;
+    font-weight:lighter;
+    font-size: large;
+    width: 100px;
+    height: 35px;
+}
+
+.invalid {
+	border: 1px solid red;
+}

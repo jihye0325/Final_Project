@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org"
+							xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/mypage/modify.css" rel="stylesheet"></link>
+    <!-- csrf 토큰 -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>회원정보</title>
+    <!-- 회원정보 수정 후 알림창 -->
+    <script>
+		const msg = '[[${ msg }]]';
+		
+		if(msg){
+			alert(msg);
+		}
+	</script>
+</head>
+<body>
+	<div th:replace="common/header.html"></div>
+	<div th:replace="mypage/sideMenu.html"></div>
+    <div class=content>
+        <div class="title">
+            <img class="logo" src="/images/hanger.png">
+            <div>Clendy 회원정보</div>
+        </div>
+
+        <div class="joinForm">
+            <form th:action="@{/mypage/modify}" name="modify" method="post">
+                <div class="id_area">
+                    <span>아이디</span>
+                    <div class="id_view area">
+                        <input type="text" name="id" th:value="${ m.id }" readonly>
+                       
+                    </div>
+                </div>
+
+                <div class="pwd_area">
+                    <span>현재 비밀번호</span><span class="required">*</span>
+                    <div class="pwd_input area">
+                        <input type="password" id="originPwd" name="originPwd" placeholder="비밀번호를 입력하세요" required>
+                        <span id="imgarea"><img id="pwd_img" class="pwd_img" src="/images/show.png"></span>
+                    </div>
+                </div>
+                
+                <div class="newPwd_area">
+                    <span>새로운 비밀번호</span>
+                    <div class="newPwd_input area">
+                        <input type="password" name="password" id="password" minlength="8" placeholder="비밀번호(영문,숫자,특수문자 조합 최소 8자리)">
+                        <span id="imgarea2"><img id="pwd_img" class="pwd_img" src="/images/show.png"></span>
+                        <span id="pwd1_img"></span><br>
+                    	<span id="pwd1Confirm"></span>
+                    </div>
+                </div>
+
+                <div class="newPwdCheck_area">
+                    <span>새로운 비밀번호 확인</span>
+                    <div class="newPwdCheck_input area">
+                        <input type="password" name="password2" id="password2" minlength="8" placeholder="비밀번호 재입력">
+                        <span id="imgarea3"><img id="pwd_img" class="pwd_img" src="/images/show.png"></span>
+                        <span id="pwd2_img"></span><br>
+                    	<span id="pwd2Confirm"></span>
+                    </div>
+                </div>
+
+                <div class="name_area">
+                    <span>이름</span>
+                    <div class="name_view area">
+                        <input type="text" name="user_name" th:value="${ m.user_name }" readonly>
+                    </div>
+                </div>
+
+                <div class="email_area">
+                    <span>이메일</span><span class="required">*</span><span id="emailConfirm"></span>
+                    <div class="email_input area">
+                        <input type="email" name="email" id="email" th:value="${ m.email }" required>
+                        <span id="e_confirm_img"></span>
+                    </div>
+                </div>
+
+                <div class="phone_area">
+                    <span>휴대폰 번호</span><span class="required">*</span><span id="phoneConfirm"></span>
+                    <div class="phone_input area">
+                        <input type="tel" name="phone" id="phone" th:value="${ m.phone }" placeholder="(-)포함 입력" required>
+                        <button id="phoneCheck" type="button">중복확인</button>
+                   		<span id="p_confirm_img"></span>
+                    </div>
+                </div>
+					
+                <div class="postcodify_area">
+                    <span>우편번호</span>
+                    <div class="postcodify_input area">
+                        <input type="text" name="address" th:if="${m.address != ',,'}" th:value="${#strings.arraySplit(m.address, ',')[0]}" class="postcodify_postcode5" readonly>
+                        <input type="text" name="address" th:if="${m.address == ',,'}" class="postcodify_postcode5" readonly>
+                        <button id="postcodify_search_button" type="button">검색</button>
+                    </div>
+                </div>
+
+                <div class="postcodify2_area">
+                    <span>도로명주소</span>
+                    <div class="postcodify2_input area">
+                        <input type="text" name="address" th:if="${m.address != ',,'}" th:value="${#strings.arraySplit(m.address, ',')[1]}" class="postcodify_address" readonly>
+                        <input type="text" name="address" th:if="${m.address == ',,'}" class="postcodify_address" readonly>
+                    </div>
+                </div>
+
+                <div class="postcodify3_area">
+                    <span>상세주소</span>
+                    <div class="postcodify3_input area">
+                        <input type="text" name="address"  th:if="${m.address != ',,'}" th:value="${#strings.arraySplit(m.address, ',')[2]}" class="postcodify_details">
+                        <input type="text" name="address"  th:if="${m.address == ',,'}" class="postcodify_details">
+                    </div>
+                </div>
+
+                <div class="gender_area">
+                    <span>성별</span>
+                    <div th:text="${ m.gender }"></div>
+                </div>
+
+                <div class="bodySize_area">
+                    <span>Body Size(선택사항)</span>
+                    <div class="bodySize_input_area">
+                        <span>키</span><input type="number" id="height" name="height" th:value="${ m.height }" placeholder="(cm)">
+                        <span>몸무게</span><input type="number" id="weight" name="weight" th:value="${ m.weight }" placeholder="(kg)">
+                    </div>
+                </div>
+                
+               	<div class="btn_area">
+            		<button id="modify" type="submit">수정</button>
+        		</div>		
+            </form>
+        </div>
+    </div>
+	<div th:replace="common/footer.html"></div>
+    
+    
+    <!-- 주소입력 : jQuery와 postcodify 로딩 -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script src="//d1p7wdleee1q2z.cloudfront.net/post/search.min.js"></script>
+	
+	<!-- '검색' 단추 누르면 팝업 레이어 열리도록 설정 -->
+    <script> $(function() { $("#postcodify_search_button").postcodifyPopUp(); }); </script>
+    
+    <!-- 유효성 -->
+    <script>
+ 	// 이메일 유효성
+	email.addEventListener('input', () => {
+		var emailCheck = false;
+		$("#modify").attr("disabled", true);
+		
+		if(!email_Confirm(email.value)){
+			emailConfirm.innerHTML = '(이메일 형식을 확인해주세요)';
+			e_confirm_img.innerHTML = '';
+			emailCheck = false;    			
+		} else {
+			emailConfirm.innerHTML = '';
+			e_confirm_img.innerHTML = '<img src="/images/check.png">';
+			emailCheck = true;
+		}
+		
+		if(emailCheck){
+			$("#modify").removeAttr("disabled");
+		} else {
+			$("#modify").attr("disabled", true);
+		}
+		
+	});
+	
+	function email_Confirm(email){
+		var regExp = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+    	return regExp.test(email);
+	}
+    
+	// 비밀번호 유효성, 비밀번호 재입력 일치 확인
+	
+	password.addEventListener('input', () => {
+		
+		 if(!pwdConfirm(password.value)){
+			 pwd1Confirm.innerHTML = '(비밀번호 형식을 확인해주세요)';
+			 pwd1_img.innerHTML = '';
+			 var pwdCheck = false;
+		 } else {
+			 pwd1Confirm.innerHTML = '';
+			 pwd1_img.innerHTML = '<img src="/images/check.png">';
+			 if(password.value == ""){
+				 pwd1_img.innerHTML = '';
+			 }
+			 var pwdCheck = true;
+			 $("#password2").attr("required", true);
+		 }
+		 
+			if(pwdCheck){
+			$("#modify").removeAttr("disabled");
+		} else {
+			$("#modify").attr("disabled", true);
+		}
+		 
+	 });
+	 
+	 function pwdConfirm(password){
+ 		var regExp = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/; 
+		if(password == "")
+			return true;
+ 		
+    	return regExp.test(password);
+	 }
+	 	 
+ 	password2.addEventListener('input', () => {
+ 		var pwdCheck = false;
+ 	 	$("#modify").attr("disabled", true);
+ 	 	
+         if(password.value != password2.value){
+        	 password.classList.add('invalid');
+        	 password2.classList.add('invalid');
+             pwd2Confirm.innerHTML = '비밀번호가 일치하지 않습니다';
+             pwd2_img.innerHTML = '';
+             var pwdCheck = false;
+         } else {
+        	 password.classList.remove('invalid');
+        	 password2.classList.remove('invalid');
+             pwd2Confirm.innerHTML = '';
+             pwd2_img.innerHTML = '<img src="/images/check.png">';
+             var pwdCheck = true;
+         }
+         
+			if(pwdCheck){
+			$("#modify").removeAttr("disabled");
+		} else {
+			$("#modify").attr("disabled", true);
+		}
+     });
+    
+ // 전화번호 유효성  	
+ 	const origin_phone = $('[name=phone]').val();
+ 
+    phone.addEventListener('input', () => {
+    	$("#modify").attr("disabled", true);
+		var isUsable = false;
+		phoneConfirm.innerHTML = '중복확인 버튼 눌러주세요';
+    });	
+	
+    
+	$('#phoneCheck').on('click', function(){
+		var phone = $('[name=phone]');
+		var phoneValue = phone.val();
+		
+		if(origin_phone == phoneValue){
+			alert('현재 전화번호와 같습니다.');
+			$("#modify").removeAttr("disabled");
+			isUsable = true;
+			return;
+		}
+		
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content"); 
+		
+		if(!phone_Confirm(phoneValue)) {
+			alert('01x-xxx(x)-xxxx 형태로 입력해주세요.');
+			phone.focus();
+		} else{
+    		$.ajax({
+    			url : "/member/phoneCheck",
+    			type : "post",
+    			data : {phone : phoneValue},
+    			/* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+				beforeSend : function(xhr)		
+				{
+					xhr.setRequestHeader(header, token);    					
+				},
+				success : function(result){
+					if(result > 0) {
+						alert("전화번호가 이미 사용 중입니다. 다른 전화번호를 입력해주세요.");
+						phone.focus();
+					} else	{
+						if(confirm("사용하실 수 있는 전화번호입니다.")){
+							phone.attr('readonly', true);
+							isUsable = true;
+							p_confirm_img.innerHTML = '<img src="/images/check.png">';
+							phoneConfirm.innerHTML = '';
+						} else {
+							phone.attr('readonly', false);
+							phone.focus();
+							isUsable = false;
+						}	
+					}
+	
+					if(isUsable){
+						$("#modify").removeAttr("disabled");
+					} else {
+						$("#modify").attr("disabled", true);
+					}
+				},
+				error : function(e){
+					console.log(e);
+				}
+    		});	
+		}
+	});
+
+	function phone_Confirm(phone){
+		var regExp = /^01[\d]{1}-\d{3,4}-\d{4}$/; 
+
+    	return regExp.test(phone);
+	}
+    </script>
+    
+    <!-- 비밀번호 보기 -->
+    <script>
+	$('#imgarea').on('click', function(){
+		$('#originPwd').toggleClass('active');
+		if($('#originPwd').hasClass('active')){
+			imgarea.innerHTML = '<img id="pwd_img" class="pwd_img" src="/images/blind.png">';
+			$('#originPwd').attr('type', "text");
+		} else {
+			imgarea.innerHTML = '<img id="pwd_img" class="pwd_img" src="/images/show.png">';
+			$('#originPwd').attr('type', "password");
+		}
+	});
+    
+	$('#imgarea2').on('click', function(){
+		$('#password').toggleClass('active');
+		if($('#password').hasClass('active')){
+			imgarea2.innerHTML = '<img id="pwd_img" class="pwd_img" src="/images/blind.png">';
+			$('#password').attr('type', "text");
+		} else {
+			imgarea2.innerHTML = '<img id="pwd_img" class="pwd_img" src="/images/show.png">';
+			$('#password').attr('type', "password");
+		}
+	});
+	
+	$('#imgarea3').on('click', function(){
+		$('#password2').toggleClass('active');
+		if($('#password2').hasClass('active')){
+			imgarea3.innerHTML = '<img id="pwd_img" class="pwd_img" src="/images/blind.png">';
+			$('#password2').attr('type', "text");
+		} else {
+			imgarea3.innerHTML = '<img id="pwd_img" class="pwd_img" src="/images/show.png">';
+			$('#password2').attr('type', "password");
+		}
+	});
+    </script>
+    
+    <script>
+    	$("#modify").on('click', function(){
+    		if($("#modify").prop("disabled")){
+    			alert("확인");
+    		}
+    	});
+    
+    </script>
+    
+    
+    
+</body>
+</head>
+<body>

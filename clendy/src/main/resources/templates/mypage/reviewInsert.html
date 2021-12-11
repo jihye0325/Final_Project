@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/mypage/reviewInsert.css" rel="stylesheet"></head>
+	<!-- include libraries(jQuery, bootstrap) --> 
+	<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet"> 
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js">
+	</script> <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+	<!-- include summernote css/js--> 
+	<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
+	<script src="/resources/js/summernote-ko-KR.js"></script>
+    <title>리뷰 작성</title>
+    <script>
+		const msg = '[[${ msg }]]';
+		
+		if(msg){
+			alert(msg);
+			if(msg == "리뷰가 등록되어 포인트 200원 적립되었습니다."){
+				window.opener.location.href = window.opener.document.URL;
+				window.close();
+			}
+		}
+		
+	</script>
+</head>
+<body>
+    <div class="outer">
+        <div class="title">리뷰 작성</div>
+        <div class="product">
+            <img th:src="@{${order_option.product_option.product.imageList[0].route} + ${order_option.product_option.product.imageList[0].imgrName}}">
+            <div class="product_info">
+                <div id="pname" th:text="${order_option.product_option.product.p_name}"></div>
+                <div id="option"th:text="|옵션 : ${order_option.product_option.p_color}, ${order_option.product_option.p_size}|"></div>
+            </div>
+        </div>
+        
+        <form id="reviewForm" th:action="@{/mypage/reviewInsert(${_csrf.parameterName}=${_csrf.token})}" method="post">
+	        <input type="hidden" name="order_option_code" th:value="${order_option.order_option_code}">
+	        <div class="content">
+	            <div class="title_area">
+	                <span>제목</span>
+	                <input type="text" id="r_title" name="r_title" required>
+	            </div>
+	
+	            <div class="score">
+	                <span>별점</span>
+	                <select name="score">
+	                    <option value="1">1점</option>
+	                    <option value="2">2점</option>
+	                    <option value="3">3점</option>
+	                    <option value="4">4점</option>
+	                    <option value="5">5점</option>
+	                </select>
+	            </div>
+	            
+	            <div class="size">
+	                <span>사이즈공개</span>
+	                <input type="checkbox" id="size_yn" name="open_size" value="Y">
+	                <span id="size_info" th:text="|${m.gender}/${m.height}cm/${m.weight}kg|"></span>
+	            </div>
+	            
+	            <!-- summernote 연결-->
+				<div class="container">
+					<textarea id="summernote" name="content"></textarea>
+				</div>
+	        </div>
+	
+	        <div class="btn_area">
+	            <button type="button" onclick="insertReview()">등록</button>
+	            <button type="button" onclick="reviewCancle()">취소</button>
+	        </div>
+        </form>
+    </div>
+	
+	<script>
+		$(document).ready(function() {
+		     $('#summernote').summernote({
+		    	 	 width: 900,
+		             height: 300,                
+		             minHeight: null,            
+		             maxHeight: null,             
+		             focus: true,
+		             lang: "ko-KR"
+		     });
+		});
+				
+		function reviewCancle(){
+			window.close();
+		}
+	</script>
+	
+	<!-- 등록유효성 -->
+	<script>
+		function insertReview(){
+			var form = $("#reviewForm");
+			var title = $("#r_title");
+			var content = $("#summernote");
+			
+			if(title.val().length == 0){
+				alert('제목을 작성해주세요.');
+				title.focus();
+				return;					
+			} else if (title.val().length > 30){
+				alert('제목은 30자 이내로 입력 가능합니다.');
+				title.focus();
+				return;					
+			}
+			
+			if(content.val().length < 10){
+				alert('리뷰를 10자 이상으로 작성해주세요.');
+				content.focus();
+				return;	
+			}
+			
+			form.submit();
+			
+		}
+	</script>
+</body>
+</html>

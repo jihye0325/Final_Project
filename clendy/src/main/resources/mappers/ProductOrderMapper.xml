@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.clendy.product.model.dao.ProductOrderMapper">
+	<resultMap id="memberResultMap" type="com.kh.clendy.member.model.vo.Member">
+		<result property="user_name" column="USER_NAME"/>
+		<result property="phone" column="PHONE"/>
+		<result property="address" column="ADDRESS"/>
+	</resultMap>
+	
+	<resultMap id="orderInfoResultMap" type="com.kh.clendy.product.model.vo.Order">
+		<result property="pName" column="P_NAME"/>
+		<result property="pOptionNo" column="P_OPTION_NO"/>
+		<result property="pColor" column="P_COLOR"/>
+		<result property="pSize" column="P_SIZE"/>
+		<result property="pStock" column="P_STOCK"/>
+		<result property="pPrice" column="P_PRICE"/>
+		<result property="pDiscount" column="P_DISCOUNT"/>
+		<result property="cartMount" column="CARTAMOUNT"/>
+		<result property="sellerCode" column="SELLER_CODE"/>
+		<result property="aNo" column="A_NO"/>
+		<result property="sellerName" column="SELLER_NAME"/>
+		<association property="orderImage" resultMap="imageResultMap"/>
+	</resultMap>
+	
+	<resultMap id="imageResultMap" type="com.kh.clendy.product.model.vo.ProductImage" >
+		<id property="imgNo" column="IMG_NO"/>
+		<result property="route" column="ROUTE"/>
+		<result property="imgName" column="IMG_NAME"/>
+		<result property="imgrName" column="IMG_R_NAME"/>
+		<result property="imgLevel" column="IMG_LEVEL"/>
+		<result property="imgStatus" column="IMG_STATUS"/>
+	</resultMap>
+	
+	<resultMap id="couponResultMap" type="com.kh.clendy.mypage.model.vo.Coupon">
+		<id property="cou_no" column="COU_NO"/>
+		<result property="cou_name" column="COU_NAME"/>
+		<result property="cou_condition" column="COU_CONDITION"/>
+		<result property="cou_price" column="COU_PRICE"/>
+		<result property="start_date" column="START_DATE"/>
+		<result property="expire_date" column="EXPIRE_DATE"/>
+		<result property="cou_status" column="COU_STATUS"/>
+		<result property="cou_dday" column="COU_DDAY"/>
+	</resultMap>
+	
+	<resultMap id="productComplteResultMap" type="com.kh.clendy.product.model.vo.ProductComplete">
+		<id property="orderOptionCode" column="ORDER_OPTION_CODE"/>
+		<result property="orderCode" column="ORDER_CODE"/>
+		<result property="userNo" column="USER_NO"/>
+		<result property="orderDelivery" column="ORDER_DELIVERY"/>
+		<result property="orderAllPrice" column="ORDER_ALL_PRICE"/>
+		<!-- <result property="orderOptionCode" column="ORDER_OPTION_CODE"/> -->
+		<result property="orderProductNum" column="ORDER_PRODUCT_NUM"/>
+		<result property="pOptionNo" column="P_OPTION_NO"/>
+		<result property="pNo" column="P_NO"/>
+		<result property="pColor" column="P_COLOR"/>
+		<result property="pSize" column="P_SIZE"/>
+		<result property="pStock" column="P_STOCK"/>
+		<result property="pName" column="P_NAME"/>
+		<result property="pPrice" column="P_PRICE"/>
+		<result property="pDisCount" column="P_DISCOUNT"/>
+		<result property="sellerCode" column="SELLER_CODE"/>
+		<result property="aNo" column="A_NO"/>
+		<result property="sellerName" column="SELLER_NAME"/>
+		<association property="productImage" resultMap="imageResultMap"/>
+	</resultMap>
+	
+	<resultMap id="orderPayMentEnd" type="com.kh.clendy.product.model.vo.ProductComplete">
+		<result property="orderAllPrice" column="ORDER_ALL_PRICE"/>
+		<result property="orderDelivery" column="ORDER_DELIVERY"/>
+		<result property="point" column="POINT"/>
+		<result property="payMoney" column="PAY_MONEY"/>
+		<result property="payCardName" column="PAY_CARD_NAME"/>
+		<result property="payCardNum" column="PAY_CARD_NUM"/>
+	
+	</resultMap>
+	
+	<select id="orderMemberSelect" parameterType="_int" resultMap="memberResultMap">
+		SELECT
+		       USER_NAME
+		     , PHONE
+		     , ADDRESS
+		  FROM MEMBER
+		 WHERE USER_NO = #{ userNo }
+	</select>
+	
+	<select id="orderInfoSelect" parameterType="com.kh.clendy.product.model.vo.ProductCart" resultMap="orderInfoResultMap">
+		SELECT
+		       P_NAME
+		     , P_OPTION_NO
+		     , P_COLOR
+		     , P_SIZE
+		     , P_STOCK
+		     , P_PRICE
+		     , P_DISCOUNT
+		     , #{cartAmount} AS CARTAMOUNT
+		     , SELLER_CODE
+		     , A_NO
+		     , SELLER_NAME
+		     , IMG_NO
+		     , ROUTE
+		     , IMG_NAME
+		     , IMG_R_NAME
+		     , IMG_LEVEL
+		     , IMG_STATUS
+		 FROM PRODUCT_OPTION
+		 JOIN PRODUCT USING(P_NO)
+		 JOIN PRODUCT_IMAGE USING(P_NO)
+ 		 JOIN IMAGE USING(IMG_NO)
+		 JOIN SELLER USING(SELLER_CODE)
+		 JOIN APPLY_STORE USING(A_NO)
+		 WHERE IMG_LEVEL  = 0
+		 AND P_OPTION_NO = #{ pOptionNo }
+	</select>
+	
+		
+	<select id="orderPointSelect" parameterType="_int" resultType="_int">
+		SELECT
+	       NVL(SUM(POINT), 0 ) AS POINT
+	       FROM POINT
+	       WHERE USER_NO = #{ userNo }
+	</select>
+	
+	<!-- 상품 주문 추가 -->
+	<insert id="orderProductOrder" parameterType="map">
+		INSERT 
+		  INTO PRODUCT_ORDER
+		    (
+		       ORDER_CODE
+		     , USER_NO
+		     , ORDER_REQUEST
+		     , ORDER_CREATE_DATE
+		     , ORDER_DELIVERY
+		     , ORDER_ALL_PRICE
+		     , ORDER_MODIFY_DATE
+		    )
+		VALUES
+		    (
+		        SEQ_ORDER_CODE.NEXTVAL
+		      , #{ userNo }
+		      , #{ postRequest }
+		      , SYSDATE
+		      , #{ postPrice }
+		      , #{ orderPrice }
+		      , SYSDATE
+		    )
+	</insert>
+	
+	<insert id="orderOrderOption" parameterType="com.kh.clendy.product.model.vo.ProductCart">
+		<selectKey keyProperty="cartNo" resultType="int" order="BEFORE">
+	    	SELECT SEQ_ORDER_CODE.CURRVAL FROM DUAL
+		</selectKey>
+		INSERT
+		  INTO ORDER_OPTION
+		  (
+		       ORDER_OPTION_CODE
+		     , ORDER_CODE
+		     , P_OPTION_NO
+		     , ORDER_PRODUCT_NUM
+		     , ORDER_STATUS_CODE
+		     , ORDER_POSTNUM
+		  )
+		  VALUES
+		  (
+		       SEQ_ORDER_OPTION_CODE.NEXTVAL
+		     , #{ cartNo }
+		     , #{ pOptionNo }
+		     , #{ cartAmount }
+		     , 'STATUS_CODE1'
+		     , NULL
+		  )
+	</insert>
+	
+	<insert id="orderPoint" parameterType="map">
+		<selectKey keyProperty="orderOptionCode" resultType="int" order="BEFORE">
+	    	SELECT SEQ_ORDER_CODE.CURRVAL FROM DUAL
+		</selectKey>
+		INSERT
+		  INTO POINT
+		  (
+		  	   POINT_NO
+		  	 , ORDER_CODE
+		  	 , POINT_CODE
+		  	 , POINT
+		  	 , POINT_DATE
+		  	 , USER_NO 
+		  )
+		VALUES
+		(
+			   SEQ_POINT_NO.NEXTVAL
+			 , #{ orderOptionCode }
+			 , 3
+			 , -#{ point }
+			 , SYSDATE
+			 , #{ userNo }
+		)
+	</insert>
+	
+	<insert id="orderDelInfo" parameterType="map">
+		<selectKey keyProperty="orderOptionCode" resultType="int" order="BEFORE">
+	    	SELECT SEQ_ORDER_CODE.CURRVAL FROM DUAL
+		</selectKey>
+		INSERT
+		  INTO ORDER_DEL_INFO
+		  (
+		  	   ORDER_CODE
+		  	 , ORDER_NAME
+		  	 , ORDER_ADDRESS
+		  	 , ORDER_PHONE
+		  )
+		VALUES
+		(
+			   #{orderOptionCode}
+			 , #{buyerName}
+			 , #{buyerAddr}
+			 , #{buyerTel}
+		)
+	</insert>
+	
+	<update id="orderStock" parameterType="com.kh.clendy.product.model.vo.ProductCart">
+		UPDATE PRODUCT_OPTION
+		   SET P_STOCK = P_STOCK - #{cartAmount}
+		 WHERE P_OPTION_NO = #{pOptionNo}
+	</update>
+	
+	<insert id="orderPayment" parameterType="map">
+		<selectKey keyProperty="orderOptionCode" resultType="int" order="BEFORE">
+	    	SELECT SEQ_ORDER_CODE.CURRVAL FROM DUAL
+		</selectKey>
+		INSERT
+      	  INTO PAYMENT
+      	  (
+      	  	   PAY_CODE
+      	  	 , ORDER_CODE
+      	  	 , IMP_UID
+      	  	 , MERCHANT_UID
+      	  	 , PAY_MONEY
+      	  	 , PAY_MEANS
+      	  	 , PAY_CARD_NAME
+      	  	 , PAY_CARD_NUM
+      	  	 , PAY_REFUND
+      	  )
+      	VALUES
+      	(
+      		   SEQ_PAYMENT_CODE.NEXTVAL
+      		 , #{ orderOptionCode }
+      		 , #{ impUid }
+      		 , #{ merchantUid }
+      		 , #{ amount }
+      		 , #{ payMethod }
+      		 , #{ cardName }
+      		 , #{ cardNumber }
+      		 , DEFAULT
+      	)
+	</insert>
+	
+	<select id="orderCodeSelect" parameterType="_int" resultType="_int">
+		SELECT
+			   MAX(ORDER_CODE)
+		  FROM PRODUCT_ORDER
+		 WHERE USER_NO = #{userNo}
+	</select>
+	
+	<select id="completeOrderInfo" parameterType="map" resultType="map">
+		SELECT
+		       ORDER_CODE
+		     , ORDER_NAME
+		     , ORDER_ADDRESS
+		     , ORDER_PHONE
+		     , ORDER_REQUEST
+		     FROM PRODUCT_ORDER
+		     JOIN ORDER_DEL_INFO USING(ORDER_CODE)
+		     WHERE USER_NO = #{ userNo }
+		       AND ORDER_CODE = #{ orderCode }
+	</select>
+	
+	<select id="productCompleteList" parameterType="map" resultMap="productComplteResultMap">
+		SELECT
+		       PO.ORDER_CODE
+		     , PO.USER_NO
+		     , PO.ORDER_DELIVERY
+		     , PO.ORDER_ALL_PRICE
+		     , OOP.ORDER_OPTION_CODE
+		     , OOP.ORDER_PRODUCT_NUM
+		     , POP.P_OPTION_NO
+		     , POP.P_NO
+		     , POP.P_COLOR
+		     , POP.P_SIZE
+		     , POP.P_STOCK
+		     , PRO.P_NAME
+		     , PRO.P_PRICE
+		     , PRO.P_DISCOUNT
+		     , PRO.SELLER_CODE
+		     , AST.A_NO
+		     , AST.SELLER_NAME
+		     , IMG.IMG_NO
+		     , IMG.ROUTE
+		     , IMG.IMG_NAME
+		     , IMG.IMG_R_NAME
+		     , IMG.IMG_LEVEL
+		     , IMG.IMG_STATUS
+		  FROM PRODUCT_ORDER PO
+		  JOIN MEMBER M ON(PO.USER_NO = M.USER_NO)
+		  JOIN ORDER_OPTION OOP ON(PO.ORDER_CODE = OOP.ORDER_CODE)
+		  JOIN PRODUCT_OPTION POP ON(OOP.P_OPTION_NO = POP.P_OPTION_NO)
+		  JOIN PRODUCT PRO ON(POP.P_NO = PRO.P_NO)
+		  JOIN PRODUCT_IMAGE PI ON(PRO.P_NO = PI.P_NO)
+		  JOIN IMAGE IMG ON(PI.IMG_NO = IMG.IMG_NO)
+		  JOIN SELLER SEL ON(PRO.SELLER_CODE = SEL.SELLER_CODE)
+		  JOIN APPLY_STORE AST ON(SEL.A_NO = AST.A_NO)
+		 WHERE PO.USER_NO = #{ userNo }
+		   AND PO.ORDER_CODE = #{ orderCode }
+		   AND IMG.IMG_LEVEL = 0
+	</select>
+	
+	<select id="orderPayMentEnd" parameterType="map" resultMap="orderPayMentEnd">
+		SELECT
+		       PO.ORDER_ALL_PRICE
+		     , PO.ORDER_DELIVERY
+		     , NVL(POINT,0) AS POINT
+		     , PAY_MONEY
+		     , PAY_CARD_NAME
+		     , PAY_CARD_NUM
+		    FROM PAYMENT PAY
+		    LEFT JOIN PRODUCT_ORDER PO ON(PAY.ORDER_CODE = PO.ORDER_CODE)
+		    LEFT JOIN POINT PI ON(PO.ORDER_CODE = PI.ORDER_CODE)
+		    WHERE PAY.ORDER_CODE = #{ orderCode }
+		      AND PO.USER_NO = #{ userNo }
+	</select>
+	
+</mapper>

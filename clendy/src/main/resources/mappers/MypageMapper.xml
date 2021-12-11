@@ -1,0 +1,1437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.clendy.mypage.model.dao.MypageMapper">
+	<resultMap type="com.kh.clendy.member.model.vo.Member" id="loginMemberResultMap">
+		<id property="user_no" column="USER_NO"/>
+		<result property="id" column="ID"/>
+		<result property="password" column="PASSWORD"/>
+		<result property="user_name" column="USER_NAME"/>
+		<result property="email" column="EMAIL"/>
+		<result property="phone" column="PHONE"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="gender" column="GENDER"/>
+		<result property="height" column="HEIGHT"/>
+		<result property="weight" column="WEIGHT"/>
+		<result property="sign_date" column="SIGN_DATE"/>
+		<result property="modify_date" column="MODIFY_DATE"/>
+		<result property="user_status" column="USER_STATUS"/>
+		<result property="temp_pwd_yn" column="TEMP_PWD_YN"/>
+		<collection property="memberRoleList" resultMap="memberRoleResultMap"/>
+	</resultMap>
+	
+	<resultMap type="com.kh.clendy.member.model.vo.MemberRole" id="memberRoleResultMap">
+		<id property="user_no" column="REF_USER_NO"/>
+		<id property="auth_code" column="REF_AUTH_CODE"/>
+		<association property="authority" resultMap="authorityResultMap"/>
+	</resultMap>
+	
+	<resultMap type="com.kh.clendy.member.model.vo.Authority" id="authorityResultMap">
+		<id property="auth_code" column="REF_AUTHORITY_CODE2"/>
+		<result property="auth_name" column="AUTH_NAME"/>
+		<result property="auth_desc" column="AUTH_DESC"/>	
+	</resultMap>
+	
+	<!-- point -->
+	<resultMap type="com.kh.clendy.mypage.model.vo.Point" id="pointResultMap">
+		<id property="point_no" column="POINT_NO"/>
+		<result property="order_code" column="ORDER_CODE"/>
+		<result property="point_code" column="POINT_CODE"/>
+		<result property="point" column="POINT"/>
+		<result property="point_date" column="POINT_DATE"/>
+		<result property="user_no" column="USER_NO"/>
+		<result property="point_content" column="POINT_CONTENT"/>
+		<result property="point_amount" column="POINT_AMOUNT"/>
+		<result property="point_group" column="POINT_GROUP"/>
+		<result property="point_status" column="POINT_STATUS"/>
+		<result property="rec_user" column="REC_USER"/>
+	</resultMap>
+	
+	<!-- point_category -->
+	<resultMap type="com.kh.clendy.mypage.model.vo.Point_Category" id="point_categoryResultMap">
+		<id property="point_code" column="POINT_CODE"/>
+		<result property="point_content" column="POINT_CONTENT"/>
+		<result property="point_amount" column="POINT_AMOUNT"/>
+		<result property="point_group" column="POINT_GROUP"/>
+		<result property="point_status" column="POINT_STATUS"/>
+	</resultMap>
+	
+	<!-- coupon -->
+	<resultMap type="com.kh.clendy.mypage.model.vo.Coupon" id="couponResultMap">
+		<id property="cou_no" column="COU_NO"/>
+		<result property="cou_name" column="COU_NAME"/>
+		<result property="cou_condition" column="COU_CONDITION"/>
+		<result property="cou_price" column="COU_PRICE"/>
+		<result property="start_date" column="START_DATE"/>
+		<result property="expire_date" column="EXPIRE_DATE"/>
+		<result property="cou_status" column="COU_STATUS"/>
+	</resultMap>
+	
+	<!-- 리뷰 -->
+	<resultMap id="reviewResultMap" type="com.kh.clendy.mypage.model.vo.Review">
+		<id property="r_no" column="R_NO"/>
+		<result property="order_code" column="ORDER_CODE"/>
+		<result property="r_title" column="R_TITLE"/>
+		<result property="score" column="SCORE"/>
+		<result property="open_size" column="OPEN_SIZE"/>
+		<result property="r_content" column="R_CONTENT"/>
+		<result property="r_create_date" column="R_CREATE_DATE"/>
+		<result property="r_modify_date" column="R_MODIFY_DATE"/>
+		<result property="user_no" column="USER_NO"/>
+		<result property="order_option_code" column="ORDER_OPTION_CODE"/>
+		<result property="like_cnt" column="LIKE_CNT"/>
+		<association property="order_option" resultMap="order_option_listResultMap"/>
+		<association property="member" resultMap="loginMemberResultMap"/>
+	</resultMap>
+	
+	<!-- Wish List -->
+	<resultMap id="wishListResultMap" type="com.kh.clendy.mypage.model.vo.Wishlist">
+		<id property="user_no" column="USER_NO"/>
+		<collection property="product_list" resultMap="productListResultMap"/>
+	</resultMap>
+	
+	<!-- Product_Order -->
+	<resultMap id ="product_orderResultMap" type="com.kh.clendy.mypage.model.vo.Product_Order">
+		<id property="order_code" column="ORDER_CODE"/>
+		<result property="user_no" column="USER_NO"/>
+		<result property="order_request" column="ORDER_REQUEST"/>
+		<result property="order_create_date" column="ORDER_CREATE_DATE"/>
+		<result property="order_delivery" column="ORDER_DELIVERY"/>
+		<result property="order_all_price" column="ORDER_ALL_PRICE"/>
+		<result property="order_postnum" column="ORDER_POSTNUM"/>
+		<result property="order_modify_date" column="ORDER_MODIFY_DATE"/>
+		<association property="order_status" resultMap="order_statusResultMap"/>
+		<collection property="order_option_list" resultMap="order_option_listResultMap"/>
+	</resultMap>
+	
+	<!-- Order_Status -->
+	<resultMap id="order_statusResultMap" type="com.kh.clendy.mypage.model.vo.Order_Status">
+		<id property="order_status_code" column="ORDER_STATUS_CODE"/>
+		<result property="order_status_name" column="ORDER_STATUS_NAME"/>	
+	</resultMap>
+	
+	<!-- Order_Option -->
+	<resultMap id="order_option_listResultMap" type="com.kh.clendy.mypage.model.vo.Order_Option">
+		<id property="order_option_code" column="ORDER_OPTION_CODE"/>
+		<result property="order_code" column="ORDER_CODE"/>
+		<result property="order_product_num" column="ORDER_PRODUCT_NUM"/>
+		<result property="order_request" column="ORDER_REQUEST"/>
+		<result property="order_create_date" column="ORDER_CREATE_DATE"/>
+		<result property="order_delivery" column="ORDER_DELIVERY"/>
+		<result property="order_all_price" column="ORDER_ALL_PRICE"/>
+		<result property="order_postnum" column="ORDER_POSTNUM"/>
+		<result property="order_modify_date" column="ORDER_MODIFY_DATE"/>
+		<result property="p_name" column="P_NAME"/>
+		<result property="p_color" column="P_COLOR"/>
+		<result property="p_size" column="P_SIZE"/>
+		<result property="order_product_num" column="ORDER_PRODUCT_NUM"/>
+		<result property="order_name" column="ORDER_NAME"/>
+		<result property="order_address" column="ORDER_ADDRESS"/>
+		<result property="order_phone" column="ORDER_PHONE"/>
+		<result property="order_status_name" column="ORDER_STATUS_NAME"/>
+		<result property="route" column="ROUTE"/>
+		<result property="img_r_name" column="IMG_R_NAME"/>
+		<result property="r_no" column="R_NO"/>
+		<result property="p_no" column="P_NO"/>
+		<result property="p_price" column="P_PRICE"/>
+		<result property="subtotal" column="SUBTOTAL"/>
+		<result property="p_discount" column="P_DISCOUNT"/>
+		<result property="merchant_uid" column ="MERCHANT_UID"/>
+		<result property="pay_money" column="PAY_MONEY"/>
+		<result property="r_status" column="R_STATUS"/>
+		<association property="product_option" resultMap="product_optionResultMap"/>
+	</resultMap>
+	
+	<!-- Product_Option -->
+	<resultMap id="product_optionResultMap" type="com.kh.clendy.mypage.model.vo.Product_Option">
+		<id property="p_option_no" column="P_OPTION_NO"/>
+		<result property="p_color" column="P_COLOR"/>
+		<result property="p_size" column="P_SIZE"/>
+		<result property="p_stock" column="P_STOCK"/>
+		<association property="product" resultMap="productListResultMap"/>
+	</resultMap>
+	
+	<!-- Product -->
+	<resultMap id="productListResultMap" type="com.kh.clendy.mypage.model.vo.Product">
+		<id property="p_no" column="P_NO"/>
+		<result property="p_name" column="P_NAME"/>	
+		<result property="p_price" column="P_PRICE"/>	
+		<result property="p_discount" column="P_DISCOUNT"/>	
+		<result property="p_able_coupon" column="P_ABLE_COUPON"/>	
+		<result property="p_detail_image" column="P_DETAIL_IMAGE"/>	
+		<result property="category_code" column="CATEGORY_CODE"/>	
+		<result property="seller_code" column="SELLER_CODE"/>
+		<result property="p_status" column="P_STATUS"/>
+		<association property="product_category" resultMap="product_categoryResultMap"/>
+		<association property="seller" resultMap="sellerResultMap"/>
+		<collection property="imageList" resultMap="imageResultMap"/>
+	</resultMap>
+	
+	<!-- seller -->
+	<resultMap id="sellerResultMap" type="com.kh.clendy.mypage.model.vo.Seller">
+		<id property="seller_code" column="SELLER_CODE"/>
+		<result property="a_no" column="A_NO"/>
+		<association property="applystore" resultMap="applystoreResultMap"/>
+	</resultMap>
+	
+	<!-- applystore -->
+	<resultMap id="applystoreResultMap" type="com.kh.clendy.common.model.vo.ApplyStore">
+		<id property="a_no" column="A_NO"/>
+		<result property="seller_name" column="SELLER_NAME"/>
+		<result property="rep_name" column="REP_NAME"/>
+		<result property="rep_num" column="REP_NUM"/>
+		<result property="b_license" column="B_LICENSE"/>
+		<result property="o_b_license" column="O_B_LICENSE"/>
+		<result property="phone" column="PHONE"/>
+		<result property="email" column="EMAIL"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="account_bank" column="ACCOUNT_BANK"/>
+		<result property="account_num" column="ACCOUNT_NUM"/>
+		<result property="apply_date" column="APPLY_DATE"/>
+		<result property="user_no" column="USER_NO"/>
+	</resultMap>
+	
+	<!-- Product_Category -->
+	<resultMap id="product_categoryResultMap" type="com.kh.clendy.mypage.model.vo.Product_Category">
+		<id property="category_code" column="CATEGORY_CODE"/>
+		<result property="category_name" column="CATEGORY_NAME"/>
+		<result property="ref_category_code" column="REF_CATEGORY_CODE"/>
+	</resultMap>
+	
+	<!-- Image -->
+	<resultMap id="imageResultMap" type="com.kh.clendy.mypage.model.vo.Image">
+		<id property="imgNo" column="IMG_NO"/>
+		<result property="route" column="ROUTE"/>
+		<result property="imgName" column="IMG_NAME"/>
+		<result property="imgrName" column="IMG_R_NAME"/>
+		<result property="imgLevel" column="IMG_LEVEL"/>
+		<result property="imgStatus" column="IMG_STATUS"/>
+	</resultMap>
+	
+	<!-- Cart -->
+	<resultMap id="cartResultMap" type="com.kh.clendy.mypage.model.vo.Cart">
+		<id property="cart_no" column="CART_NO"/>
+		<result property="cart_amount" column="CART_AMOUNT"/>
+		<result property="p_option_no" column="P_OPTION_NO"/>
+		<result property="user_no" column="USER_NO"/>
+		<result property="seller_code" column="SELLER_CODE"/>
+		<result property="seller_name" column="SELLER_NAME"/>
+		<result property="p_color" column="P_COLOR"/>
+		<result property="p_size" column="P_SIZE"/>
+		<result property="p_name" column="P_NAME"/>
+		<result property="p_price" column="P_PRICE"/>
+		<result property="route" column="ROUTE"/>
+		<result property="imgrName" column="IMG_R_NAME"/>
+		<result property="subtotal" column="SUBTOTAL"/>
+		<result property="p_no" column="P_NO"/>
+		<result property="p_discount" column="P_DISCOUNT"/>
+	</resultMap>
+	
+	<!-- 상품 문의글  -->
+	<resultMap id="productQnaQresultMap" type="com.kh.clendy.mypage.model.vo.ProductQnaQ">
+		<id property="p_i_q_code" column="P_I_Q_CODE"/>
+		<result property="p_i_cate_code" column="P_I_CATE_CODE"/>
+		<result property="p_i_cate_name" column="P_I_CATE_NAME"/>
+		<result property="p_no" column="P_NO"/>
+		<result property="p_name" column="P_NAME"/>
+		<result property="p_i_q_title" column="P_I_Q_TITLE"/>
+		<result property="p_i_q_content" column="P_I_Q_CONTENT"/>
+		<result property="p_i_q_create_date" column="P_I_Q_CREATE_DATE"/>
+		<result property="p_i_q_modify_date" column="P_I_Q_MODIFY_DATE"/>
+		<association property="productQnaA" resultMap="productQnaAresultMap"/>
+	</resultMap>
+	
+	<!-- 상품 문의글 답변 -->
+	<resultMap id="productQnaAresultMap" type="com.kh.clendy.product.model.vo.ProductQnaA">
+		<id property="piaCode" column="P_I_A_CODE"/>
+		<result property="piaContent" column="P_I_A_CONTENT"/>
+		<result property="piaCreateDate" column="P_I_A_CREATE_DATE"/>
+		<result property="piaDelStatus" column="P_I_A_DEL_STATUS"/>
+	</resultMap>
+	
+	<!-- Payment -->
+	<resultMap id="paymentResultMap" type="com.kh.clendy.mypage.model.vo.Payment">
+		<id property="pay_code" column="PAY_CODE"/>
+		<result property="order_code" column="ORDER_CODE"/>
+		<result property="pay_money" column="PAY_MONEY"/>
+		<result property="pay_means" column="PAY_MEANS"/>
+		<result property="pay_card_name" column="PAY_CARD_NAME"/>
+		<result property="pay_card_num" column="PAY_CARD_NUM"/>
+		<result property="pay_refund" column="PAY_REFUND"/>
+		<result property="order_request" column="ORDER_REQUEST"/>
+		<result property="order_name" column="ORDER_NAME"/>
+		<result property="order_address" column="ORDER_ADDRESS"/>
+		<result property="order_phone" column="ORDER_PHONE"/>
+		<result property="imp_uid" column="IMP_UID"/>
+		<result property="merchant_uid" column="MERCHANT_UID"/>
+		<result property="p_name" column="P_NAME"/>
+		<result property="point" column="POINT"/>
+		<result property="p_color" column="P_COLOR"/>
+		<result property="p_size" column="P_SIZE"/>
+		<result property="point_amount" column="POINT_AMOUNT"/>
+		<result property="order_status_code" column="ORDER_STATUS_CODE"/>
+	</resultMap>
+	
+	<!-- 1:1 문의글 -->
+	<resultMap type="com.kh.clendy.CScenter.model.vo.PersonalQ" id="PersonalQMap">
+		<id property="p_no" column="P_NO"/>
+		<result property="p_title" column="P_TITLE"/>
+		<result property="p_content" column="P_CONTENT"/>
+		<result property="p_answer" column="P_ANSWER"/>
+		<result property="p_enroll_date" column="P_ENROLL_DATE"/>
+		<result property="p_answer_date" column="P_ANSWER_DATE"/>
+		<result property="p_a_modify_date" column="P_A_MODIFY_DATE"/>
+		<result property="qc_no" column="QC_NO"/>
+		<result property="qc_name" column="QC_NAME"/>
+		<result property="q_writer" column="Q_WRITER"/>
+		<result property="a_writer" column="A_WRITER"/>
+	</resultMap>
+	
+	<!-- 환불-->
+	<resultMap id="refundResultMap" type="com.kh.clendy.mypage.model.vo.Refund">
+		<id property="ref_no" column="REF_NO"/>
+		<result property="order_option_code" column="ORDER_OPTION_CODE"/>
+		<result property="ref_id" column="REF_ID"/>
+		<result property="ref_reason" column="REF_REASON"/>
+		<result property="ref_status" column="REF_STATUS"/>
+		<result property="ref_price" column="REF_PRICE"/>
+		<result property="ref_name" column="REF_NAME"/>		
+		<result property="p_no" column="P_NO"/>
+		<result property="p_name" column="P_NAME"/>
+		<result property="ref_date" column="REF_DATE"/>
+	</resultMap>
+	
+	<!-- 교환 -->
+	<resultMap id="exchangeResultMap" type="com.kh.clendy.mypage.model.vo.Exchange">
+		<id property="ex_no" column="EX_NO"/>
+		<result property="order_option_code" column="ORDER_OPTION_CODE"/>
+		<result property="ex_id" column="EX_ID"/>
+		<result property="ex_reason" column="EX_REASON"/>
+		<result property="ex_status" column="EX_STATUS"/>
+		<result property="ex_option" column="EX_OPTION"/>
+		<result property="ex_date" column="EX_DATE"/>		
+		<result property="p_name" column="P_NAME"/>	
+		<result property="p_color" column="P_COLOR"/>
+		<result property="p_size" column="P_SIZE"/>
+		<result property="ex_name" column="EX_NAME"/>
+	</resultMap>
+	
+	<!-- id로 유저정보 조회 -->
+	<select id="selectMember" parameterType="_int" resultMap="loginMemberResultMap">
+			SELECT
+			        A.USER_NO
+			      , A.ID
+			      , A.PASSWORD
+			      , A.USER_NAME
+			      , A.EMAIL
+			      , A.PHONE
+			      , A.ADDRESS
+			      , A.GENDER
+			      , A.HEIGHT
+			      , A.WEIGHT
+			      , A.SIGN_DATE
+			      , A.MODIFY_DATE
+			      , A.USER_STATUS
+			      , A.TEMP_PWD_YN
+			      , B.USER_NO REF_USER_NO
+			      , B.AUTH_CODE REF_AUTHORITY_CODE
+			      , C.AUTH_CODE REF_AUTHORITY_CODE2
+			      , C.AUTH_NAME 
+			      , C.AUTH_DESC 
+			  FROM MEMBER A
+			  LEFT JOIN MEMBER_ROLE B ON(A.USER_NO = B.USER_NO)
+			  LEFT JOIN AUTHORITY C ON(B.AUTH_CODE = C.AUTH_CODE)
+			WHERE A.USER_NO = #{ user_no }
+	</select>
+	
+	<!-- Member 테이블 수정 -->
+	<update id="modifyMember" parameterType="com.kh.clendy.member.model.vo.Member">
+			UPDATE MEMBER
+		    	SET PASSWORD = #{ password }
+		      , EMAIL = #{ email }
+		      , PHONE = #{ phone }
+		      , ADDRESS = #{ address }
+		      , HEIGHT = #{ height }
+		      , WEIGHT = #{ weight }
+		    WHERE USER_NO = #{ user_no }
+	</update>
+	
+	<!-- 회원탈퇴 -> 상태 N으로 변경 --> 
+	<update id="deleteMember" parameterType="_int">
+		UPDATE MEMBER
+   		   SET USER_STATUS = 'N',
+   		       PHONE = 0
+ 		 WHERE USER_NO = #{ user_no }
+	</update>
+	
+	<!-- 적립금 개수 -->
+	<select id="countPoint_List" parameterType="_int" resultType="_int">
+		SELECT
+		    COUNT(*)
+		  FROM POINT
+		 WHERE USER_NO = #{ user_no }
+	</select>
+	
+	<!-- 적립금 리스트 불러오기 -->
+	<select id="selectPoint" parameterType="_int" resultMap="pointResultMap">
+		SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM( SELECT
+                POINT_NO,
+                ORDER_CODE,
+                POINT_CODE,
+                POINT,
+                POINT_DATE,
+                POINT_CONTENT,
+                POINT_AMOUNT,
+                POINT_STATUS,
+                REC_USER
+		    FROM POINT 
+		    JOIN POINT_CATEGORY USING(POINT_CODE)
+		   WHERE USER_NO = #{ user_no }
+		  ORDER BY POINT_NO DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 아우터 개수 -->
+	<select id="countOuter_List" parameterType="_int" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM WISHLIST
+		 JOIN PRODUCT USING(P_NO)
+		WHERE USER_NO = #{ user_no }
+		  AND CATEGORY_CODE IN (SELECT CATEGORY_CODE FROM PRODUCT_CATEGORY WHERE CATEGORY_NAME = '아우터')
+	</select>
+	
+	<!-- 위시리스트 불러오기 (아우터)-->
+	<select id="selectOuterlist" parameterType="_int" resultMap="wishListResultMap">
+		SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM( SELECT 
+		        USER_NO
+              , P_NO
+              , P_NAME
+              , P_PRICE
+              , P_STATUS
+              , CATEGORY_NAME
+              , ROUTE
+              , IMG_NAME
+              , IMG_R_NAME
+		    FROM WISHLIST
+		    JOIN PRODUCT USING (P_NO)
+		    JOIN PRODUCT_CATEGORY USING(CATEGORY_CODE)
+		    JOIN PRODUCT_IMAGE USING(P_NO)
+		    JOIN IMAGE USING(IMG_NO)
+		   WHERE USER_NO = #{ user_no }
+             AND CATEGORY_NAME = '아우터'
+		     AND IMG_LEVEL = 0
+		     AND P_STATUS = 'Y'
+		    ORDER BY CREATE_DATE DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 상의개수 -->
+	<select id="countTop_List" parameterType="_int" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM WISHLIST
+		 JOIN PRODUCT USING(P_NO)
+		WHERE USER_NO = #{ user_no }
+		  AND CATEGORY_CODE IN (SELECT CATEGORY_CODE FROM PRODUCT_CATEGORY WHERE CATEGORY_NAME = '상의')
+	</select>
+	
+	<!-- 위시리스트 불러오기 (상의)-->
+	<select id="selectToplist" parameterType="_int" resultMap="wishListResultMap">
+		SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM(SELECT 
+		        USER_NO
+              , P_NO
+              , P_NAME
+              , P_PRICE
+              , P_STATUS
+              , CATEGORY_NAME
+              , ROUTE
+              , IMG_NAME
+              , IMG_R_NAME
+		    FROM WISHLIST
+		    JOIN PRODUCT USING (P_NO)
+		    JOIN PRODUCT_CATEGORY USING(CATEGORY_CODE)
+		    JOIN PRODUCT_IMAGE USING(P_NO)
+		    JOIN IMAGE USING(IMG_NO)
+		   WHERE USER_NO = #{ user_no }
+             AND CATEGORY_NAME = '상의'
+		     AND IMG_LEVEL = 0
+		     AND P_STATUS = 'Y'
+		     ORDER BY CREATE_DATE DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 하의개수 -->
+	<select id="countBottom_List" parameterType="_int" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM WISHLIST
+		 JOIN PRODUCT USING(P_NO)
+		WHERE USER_NO = #{ user_no }
+		  AND CATEGORY_CODE IN (SELECT CATEGORY_CODE FROM PRODUCT_CATEGORY WHERE CATEGORY_NAME = '하의')
+	</select>
+	
+	<!-- 위시리스트 불러오기 (하의)-->
+	<select id="selectBottomlist" parameterType="_int" resultMap="wishListResultMap">
+		SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM(SELECT 
+		        USER_NO
+              , P_NO
+              , P_NAME
+              , P_PRICE
+              , P_STATUS
+              , CATEGORY_NAME
+              , ROUTE
+              , IMG_NAME
+              , IMG_R_NAME
+		    FROM WISHLIST
+		    JOIN PRODUCT USING (P_NO)
+		    JOIN PRODUCT_CATEGORY USING(CATEGORY_CODE)
+		    JOIN PRODUCT_IMAGE USING(P_NO)
+		    JOIN IMAGE USING(IMG_NO)
+		   WHERE USER_NO = #{ user_no }
+             AND CATEGORY_NAME = '하의'
+		     AND IMG_LEVEL = 0
+		     AND P_STATUS = 'Y'
+		     ORDER BY CREATE_DATE DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- acc 개수 -->
+	<select id="countAcc_List" parameterType="_int" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM WISHLIST
+		 JOIN PRODUCT USING(P_NO)
+		WHERE USER_NO = #{ user_no }
+		  AND CATEGORY_CODE IN (SELECT CATEGORY_CODE FROM PRODUCT_CATEGORY WHERE CATEGORY_NAME = 'ACC')
+	</select>
+	
+	<!-- 위시리스트 불러오기 (ACC)-->
+	<select id="selectAcclist" parameterType="_int" resultMap="wishListResultMap">
+		SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM( SELECT 
+		        USER_NO
+              , P_NO
+              , P_NAME
+              , P_PRICE
+              , P_STATUS
+              , CATEGORY_NAME
+              , ROUTE
+              , IMG_NAME
+              , IMG_R_NAME
+		    FROM WISHLIST
+		    JOIN PRODUCT USING (P_NO)
+		    JOIN PRODUCT_CATEGORY USING(CATEGORY_CODE)
+		    JOIN PRODUCT_IMAGE USING(P_NO)
+		    JOIN IMAGE USING(IMG_NO)
+		   WHERE USER_NO = #{ user_no }
+             AND CATEGORY_NAME = 'ACC'
+		     AND IMG_LEVEL = 0
+		     AND P_STATUS = 'Y'
+		     ORDER BY CREATE_DATE DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 위시리스트 삭제 -->
+	<delete id="deleteWish" parameterType="hashmap">
+		DELETE FROM WISHLIST
+	  		  WHERE USER_NO = #{ user_no }
+	          AND P_NO = #{ p_no }
+	</delete>
+	
+	<!-- 리뷰등록할 상품 정보조회 -->
+	<select id="selectProduct" parameterType="_int" resultMap="order_option_listResultMap">
+		SELECT 
+			    P_NO
+			  , P_NAME
+			  , P_COLOR
+			  , P_SIZE
+			  , P_PRICE
+			  , P_OPTION_NO
+			  , ROUTE
+			  , IMG_NAME
+			  , IMG_R_NAME
+			  , ORDER_OPTION_CODE
+			  , ORDER_CODE
+			  , ORDER_PRODUCT_NUM
+			  , (P_PRICE * ORDER_PRODUCT_NUM) AS SUBTOTAL
+			 FROM ORDER_OPTION
+			 JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+			 JOIN PRODUCT USING(P_NO)
+			 JOIN PRODUCT_IMAGE USING(P_NO)
+			 JOIN IMAGE USING(IMG_NO)
+			WHERE ORDER_OPTION_CODE = #{ order_option_code }
+			  AND IMG_LEVEL = 0
+	</select>
+	
+	<!-- 리뷰 등록 -->
+	<insert id="insertReview" parameterType="com.kh.clendy.mypage.model.vo.Review">
+		INSERT INTO REVIEW
+			(
+			    R_NO
+			  , R_TITLE
+			  , SCORE
+			  , OPEN_SIZE
+			  , R_CONTENT
+			  , R_CREATE_DATE
+			  , R_MODIFY_DATE
+			  , USER_NO
+			  , ORDER_OPTION_CODE
+			)
+			VALUES
+			(
+			    SEQ_R_NO.NEXTVAL
+			  , #{ r_title }
+			  , #{ score }
+			  , #{ open_size }
+			  , #{ r_content }
+			  , DEFAULT
+			  , DEFAULT
+			  , #{ user_no }
+			  , #{ order_option_code }
+			)
+	</insert>
+	
+	<!-- 리뷰 등록시 포인트 적립 -->
+	<insert id="review_Point" parameterType="_int">
+		INSERT INTO POINT
+			(
+			    POINT_NO,
+			    ORDER_CODE,
+			    POINT_CODE,
+			    POINT,
+			    POINT_DATE,
+			    USER_NO,
+			    REC_USER
+			)
+			VALUES
+			(
+			    SEQ_POINT_NO.NEXTVAL,
+			    NULL,
+			    5,
+			    (SELECT POINT_AMOUNT FROM POINT_CATEGORY WHERE POINT_CODE = 5),
+			    DEFAULT,
+			    #{ user_no },
+			    NULL
+			)
+	</insert>
+	
+	<!-- 리뷰 상세페이지 -->
+	<select id="selectReview" parameterType="_int" resultMap="reviewResultMap">
+		SELECT 
+			    R_NO
+			  , R_TITLE
+			  , SCORE
+			  , GENDER
+			  , HEIGHT
+			  , WEIGHT
+			  , R_CONTENT
+			  , R_CREATE_DATE
+			  , R_MODIFY_DATE
+			  , (SELECT COUNT(*)
+			             FROM REVIEW_LIKE
+			            WHERE REVIEW_LIKE.R_NO = REVIEW.R_NO) AS LIKE_CNT
+			  , ROUTE
+			  , IMG_R_NAME
+			  , P_NAME
+			  , P_COLOR
+			  , P_SIZE
+			  , ORDER_OPTION_CODE 
+  			  , REVIEW.USER_NO
+  			  , OPEN_SIZE
+  			  FROM REVIEW
+  			  JOIN MEMBER ON(REVIEW.USER_NO = MEMBER.USER_NO)
+			  JOIN ORDER_OPTION USING(ORDER_OPTION_CODE)
+			  JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+			  JOIN PRODUCT_ORDER USING(ORDER_CODE)
+			  JOIN PRODUCT_IMAGE USING(P_NO)
+			  JOIN PRODUCT USING(P_NO)
+			  JOIN IMAGE USING(IMG_NO)
+			 WHERE ORDER_OPTION_CODE = #{ order_option_code }
+			   AND R_STATUS = 'Y'
+   			   AND IMG_LEVEL = 0
+	</select>
+	
+	<!-- 상품문의글 개수 -->
+	<select id="countP_Qna_List" parameterType="_int" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM PRODUCT_INQUIRY_Q
+		WHERE USER_NO = #{ user_no }
+	</select>
+	
+	<!-- 상품문의글 불러오기 -->
+	<select id="selectP_Qna_List" parameterType="map" resultMap="productQnaQresultMap">
+		SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM( SELECT
+	      		  P_I_Q_CODE
+	            , P_I_CATE_CODE
+	            , P_I_CATE_NAME
+	            , P_NO
+	            , P_NAME
+	            , P_I_Q_TITLE
+	            , P_I_Q_CONTENT
+	            , P_I_Q_CREATE_DATE
+	            , P_I_Q_MODIFY_DATE
+	            , P_I_A_CODE
+	            , P_I_A_CONTENT
+	            , P_I_A_CREATE_DATE
+	            , P_I_A_DEL_STATUS
+	    		FROM PRODUCT_INQUIRY_Q
+	    		JOIN PRODUCT_INQUIRY_CATEGORY USING(P_I_CATE_CODE)
+	    		JOIN PRODUCT USING(P_NO)
+	            LEFT JOIN PRODUCT_INQUIRY_A USING(P_I_Q_CODE)
+	    	   WHERE USER_NO = #{ user_no }
+             AND P_I_Q_DEL_STATUS = 'N'
+    	   ORDER BY P_I_Q_CODE DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 리뷰 개수 -->
+	<select id="countReviewList" parameterType="_int" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM REVIEW
+		WHERE USER_NO = #{ user_no }
+	</select>
+	
+	<!-- 리뷰리스트 불러오기 -->
+	<select id="selectReview_List" parameterType="map" resultMap="reviewResultMap">
+		SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM(SELECT 
+		    R_NO
+		  , P_NAME
+		  , R_TITLE
+		  , R_CREATE_DATE
+		  , ORDER_OPTION_CODE
+		  FROM REVIEW
+		  JOIN ORDER_OPTION USING(ORDER_OPTION_CODE)
+		  JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+		  JOIN PRODUCT USING(P_NO)
+		  WHERE USER_NO = #{ user_no }
+		    AND R_STATUS = 'Y'
+		  ORDER BY R_NO DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 장바구니 조회 -->
+	<select id="selectCart_list" parameterType="_int" resultMap="cartResultMap">
+		SELECT 
+			  CART_NO
+		    , P_OPTION_NO
+		    , P_NAME
+		    , P_PRICE
+		    , CART_AMOUNT
+		    , P_COLOR
+		    , P_SIZE
+		    , ROUTE
+		    , IMG_R_NAME
+		    , SELLER_CODE AS SELLER_CODE
+		    , SELLER_NAME
+		    , P_NO
+		    , (P_PRICE * (100 - P_DISCOUNT) / 100 * CART_AMOUNT) AS SUBTOTAL
+		    , CART.USER_NO
+		    , P_DISCOUNT
+		    FROM CART
+		    JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+		    JOIN PRODUCT USING(P_NO)
+		    JOIN PRODUCT_IMAGE USING(P_NO)
+		    JOIN IMAGE USING(IMG_NO)
+		    JOIN SELLER USING(SELLER_CODE)
+		    JOIN APPLY_STORE USING(A_NO)
+		   WHERE CART.USER_NO = #{ user_no }
+		     AND P_STATUS = 'Y'
+		     AND P_STOCK >= CART_AMOUNT
+		     AND IMG_LEVEL = 0
+		ORDER BY SELLER_CODE, CART_NO DESC		
+	</select>
+	
+	<!-- 장바구니 삭제 (개별버튼) -->
+	<delete id="deleteCart" parameterType="_int">
+		DELETE FROM CART
+		 WHERE CART_NO = #{ cart_no }
+	</delete>
+	
+	<!-- 장바구니 수량감소 -->
+	<update id="minusAmount" parameterType="hashMap">
+		UPDATE CART
+		   SET CART_AMOUNT = CART_AMOUNT - 1
+		 WHERE USER_NO = #{ user_no }
+		   AND CART_NO = #{ cart_no }
+		   AND CART_AMOUNT >= 2
+	</update>
+	
+	<!-- 장바구니 수량증가 -->
+	<update id="plusAmount" parameterType="hashMap">
+		UPDATE CART
+		   SET CART_AMOUNT = CART_AMOUNT + 1
+		 WHERE USER_NO = #{ user_no }
+		   AND CART_NO = #{ cart_no }
+		   AND (SELECT
+                         P_STOCK
+                       FROM CART
+                       JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+                      WHERE P_OPTION_NO = #{ p_option_no }) > CART_AMOUNT
+	</update>
+	
+	<!-- 주문내역 카운트 -->
+	<select id="countOrderList" parameterType="_int" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		WHERE USER_NO = #{ user_no }
+	</select>
+	
+	<!-- 주문내역 조회 -->
+	<select id="selectProduct_Order" parameterType="map" resultMap="order_option_listResultMap">
+		SELECT
+				*
+			FROM (
+			SELECT
+		ROWNUM ROWN
+	  , TBL.*
+	  FROM(
+	  SELECT
+			 PRODUCT_ORDER.USER_NO, 
+			 P_NO,
+		     P_NAME,
+		     P_COLOR,
+		     P_SIZE,
+		     P_PRICE,
+		     P_DISCOUNT,
+		     ORDER_ALL_PRICE,
+		     ORDER_PRODUCT_NUM,
+		     ORDER_CODE,
+		     MERCHANT_UID,
+		     PAY_MONEY,
+		     ORDER_OPTION_CODE,
+		     ORDER_NAME,
+		     ORDER_ADDRESS,
+		     ORDER_PHONE,
+		     ORDER_CREATE_DATE,
+		     ORDER_STATUS_NAME,
+		     ROUTE,
+		     IMG_R_NAME,
+		     R_NO,
+		     R_STATUS
+		  FROM PRODUCT_ORDER
+		  JOIN ORDER_OPTION USING(ORDER_CODE)
+		  JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+		  JOIN PRODUCT USING(P_NO)
+		  JOIN PRODUCT_IMAGE USING(P_NO)
+		  JOIN IMAGE USING(IMG_NO)
+		  JOIN ORDER_DEL_INFO USING(ORDER_CODE)
+		  JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+		  LEFT JOIN REVIEW USING(ORDER_OPTION_CODE)
+		  JOIN PAYMENT USING(ORDER_CODE)
+		 WHERE PRODUCT_ORDER.USER_NO = #{ user_no }
+		   AND IMG_LEVEL = 0
+		 ORDER BY ORDER_CODE DESC) TBL)
+		 	WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 운송장조회 -->
+	<select id="selectPostnum" parameterType="_int" resultType="_int">
+		SELECT
+			    ORDER_POSTNUM
+		   FROM ORDER_OPTION
+          WHERE ORDER_OPTION_CODE = #{ order_option_code }
+	</select>
+	
+	<!-- 구매확정 -->
+	<update id="decide_buy" parameterType="_int">
+	 UPDATE ORDER_OPTION
+	    SET ORDER_STATUS_CODE = 'STATUS_CODE4',
+	    	PURCHASE_CONFIRM_DATE = SYSDATE
+	  WHERE ORDER_OPTION_CODE = #{ order_option_code }
+
+	</update>
+	
+	<!-- 구매확정 시 포인트 적립 -->
+	<insert id="buy_point" parameterType="_int">
+		INSERT INTO POINT
+		(
+		    POINT_NO,
+		    ORDER_CODE,
+		    POINT_CODE,
+		    POINT,
+		    POINT_DATE,
+		    USER_NO,
+		    REC_USER
+		)
+		VALUES
+		(   
+		    SEQ_POINT_NO.NEXTVAL,
+		    (SELECT ORDER_CODE FROM ORDER_OPTION WHERE ORDER_OPTION_CODE = #{ order_option_code }),
+		    2,
+		    ((SELECT
+		        P_PRICE * (100 - P_DISCOUNT) / 100
+		        FROM ORDER_OPTION
+		        JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+		        JOIN PRODUCT USING(P_NO)
+		       WHERE ORDER_OPTION_CODE = #{ order_option_code }) * ((SELECT POINT_AMOUNT FROM POINT_CATEGORY WHERE POINT_CODE = 2) / 100)),
+		    DEFAULT,
+		    #{ user_no },
+		    NULL    
+		)
+	</insert>
+	
+	<!-- 구매확정날짜 입력 -->
+	<update id="decide_buyDate" parameterType="_int">
+		UPDATE ORDER_OPTION
+		   SET PURCHASE_CONFIRM_DATE = SYSDATE
+		 WHERE ORDER_OPTION_CODE = #{ order_option_code }
+	</update>
+	
+	<!-- 주문상세내역 조회 -->
+	<select id="selectOrderInfo" parameterType="_int" resultMap="paymentResultMap">
+		SELECT
+		    PAY_CODE,
+		    ORDER_CODE,
+		    PAY_MONEY,
+		    PAY_MEANS,
+		    PAY_CARD_NAME,
+		    PAY_CARD_NUM,
+		    ORDER_REQUEST,
+		    ORDER_CREATE_DATE,
+		    ORDER_NAME,
+		    ORDER_ADDRESS,
+		    ORDER_PHONE,
+            P_NAME,
+            P_COLOR,
+            P_SIZE,
+            POINT,
+            (SELECT POINT_AMOUNT FROM POINT_CATEGORY WHERE POINT_CODE = 2) POINT_AMOUNT,
+            ORDER_STATUS_CODE
+		  FROM PAYMENT
+		  JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		  JOIN ORDER_DEL_INFO USING(ORDER_CODE)
+          JOIN ORDER_OPTION USING(ORDER_CODE)
+          JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+          JOIN PRODUCT USING(P_NO)
+          LEFT JOIN POINT USING(ORDER_CODE)
+		 WHERE ORDER_OPTION_CODE = #{ order_option_code }
+	</select>
+	
+	<!-- 환불요청 등록 -->
+	<insert id="requestRefund" parameterType="com.kh.clendy.mypage.model.vo.Refund">
+		INSERT INTO REFUND
+			(
+			    REF_NO,
+			    ORDER_OPTION_CODE,
+			    REF_ID,
+			    REF_REASON,
+			    REF_STATUS,
+			    REF_PRICE,
+			    REF_DATE
+			)
+			VALUES
+			(
+			    SEQ_REF_NO.NEXTVAL,
+			    #{ order_option_code },
+			    #{ ref_id },
+			    #{ ref_reason },
+			    DEFAULT,
+			    #{ ref_price },
+			    SYSDATE
+			)	
+	</insert>
+	
+	<!-- 환불 요청 상태로 변경 -->
+	<update id="changeOrder_Status" parameterType="_int">
+		UPDATE ORDER_OPTION
+		   SET ORDER_STATUS_CODE = 'STATUS_CODE5'
+		 WHERE ORDER_OPTION_CODE = #{ order_option_code }
+	</update>
+	
+	<!-- 환불 요청시 주문상태 변경날짜 -->
+	<update id="requestRefund_date" parameterType="_int">
+		UPDATE ORDER_OPTION
+		   SET PURCHASE_CONFIRM_DATE = SYSDATE
+		 WHERE ORDER_OPTION_CODE = #{ order_option_code }
+	</update>
+		
+	<!-- 1:1 문의글 개수 -->	
+	<select id="countQ_list" parameterType="_int" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM PERSONAL_Q
+		WHERE Q_WRITER = #{ user_no }
+	</select>
+		
+	<!-- 내가쓴글조회 1:1 -->
+	<select id="selectQ_list" parameterType="_int" resultMap="PersonalQMap">
+		SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM(SELECT
+			    P_NO,
+			    P_TITLE,
+			    P_CONTENT,
+			    P_ANSWER,
+			    P_ENROLL_DATE,
+			    P_ANSWER_DATE,
+			    P_A_MODIFY_DATE,
+			    QC_NO,
+			    QC_NAME,
+			    Q_WRITER,
+			    A_WRITER
+			  FROM PERSONAL_Q
+			  JOIN Q_CATEGORY USING(QC_NO)
+			 WHERE Q_WRITER = #{ user_no }
+			 ORDER BY P_NO DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>	
+	
+	<!-- 환불요청 개수 -->
+	<select id="countR_list" parameterType="_int" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM REFUND
+		 JOIN ORDER_OPTION USING(ORDER_OPTION_CODE)
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		WHERE USER_NO = #{ user_no }
+	</select>
+	
+	<!-- 환불요청 목록 조회 -->
+	<select id="selectR_list" parameterType="_int" resultMap="refundResultMap">
+			SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM( SELECT 
+			    REF_NO,
+			    ORDER_OPTION_CODE,
+			    REF_ID,
+			    REF_REASON,
+			    REF_STATUS,
+			    REF_PRICE,
+			    REF_DATE,
+			    REF_NAME,
+			    P_NO,
+			    P_NAME
+			  FROM REFUND
+			  JOIN REFUND_CATEGORY USING(REF_ID)
+			  JOIN ORDER_OPTION USING(ORDER_OPTION_CODE)
+			  JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+			  JOIN PRODUCT USING(P_NO)
+			  JOIN PRODUCT_ORDER USING(ORDER_CODE)
+			WHERE USER_NO = #{ user_no }
+			ORDER BY REF_NO DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="selectRefund" parameterType="_int" resultMap="refundResultMap">
+		SELECT
+				REF_NO,
+				ORDER_OPTION_CODE,
+				REF_ID,
+	            REF_NAME,
+				REF_REASON,
+				REF_STATUS,
+				REF_PRICE,
+				REF_DATE
+			FROM REFUND
+	        JOIN REFUND_CATEGORY USING(REF_ID)
+	        JOIN ORDER_OPTION USING(ORDER_OPTION_CODE)
+	        JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+	        JOIN PRODUCT USING(P_NO)
+	        JOIN PRODUCT_ORDER USING(ORDER_CODE)
+	     WHERE ORDER_OPTION_CODE = #{ order_option_code }
+	</select>
+	
+	<!-- 다운로드 가능한 이벤트 포인트 리스트 -->
+	<select id="selectDownableEventPoint" resultMap="point_categoryResultMap">
+	SELECT
+	      POINT_CODE
+	    , POINT_CONTENT
+	    , POINT_AMOUNT
+	    , POINT_STATUS
+	    , POINT_GROUP
+	 FROM POINT_CATEGORY 
+	 WHERE POINT_GROUP = 2
+	   AND POINT_CODE NOT IN (SELECT
+	        POINT_CODE
+	     FROM POINT
+	     WHERE USER_NO = #{user_no})
+	</select>
+	
+	<insert id="downloadEventPoint" parameterType="map">
+	INSERT INTO POINT
+	(
+	    POINT_NO
+	  , POINT_CODE
+	  , POINT
+	  , USER_NO
+	)
+	VALUES(
+	    SEQ_POINT_NO.NEXTVAL
+	   , #{downloadPoint.point_code}
+	   , #{downloadPoint.point_amount}
+	   , #{user_no}
+	)
+	</insert>
+	
+	<!-- 교환할 옵션 정보 -->
+	<select id="selectExOption" parameterType="_int" resultMap="product_optionResultMap">
+		SELECT 
+		     P_NO,
+		     P_OPTION_NO,
+		     P_COLOR,
+		     P_SIZE,
+		     P_STOCK
+		    FROM PRODUCT_OPTION
+		   WHERE P_NO = (SELECT P_NO
+		                    FROM ORDER_OPTION
+		                    JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+		                   WHERE ORDER_OPTION_CODE = #{ order_option_code })
+	</select>
+	
+	<!-- 교환요청 -->
+	<insert id="requestExchange" parameterType="com.kh.clendy.mypage.model.vo.Exchange">
+		INSERT INTO EXCHANGE
+			(
+			    EX_NO,
+			    ORDER_OPTION_CODE,
+			    EX_ID,
+			    EX_REASON,
+			    EX_STATUS,
+			    EX_OPTION
+			)
+			VALUES
+			(
+			    SEQ_EX_NO.NEXTVAL,
+			    #{ order_option_code },
+			    #{ ex_id },
+			    #{ ex_reason },
+			    DEFAULT,
+			    #{ ex_option }
+			)
+	</insert>
+	<!-- 주문상태 교환요청으로 변경 -->
+	<update id="changeExchange_stauts" parameterType="_int">
+		UPDATE ORDER_OPTION
+		   SET ORDER_STATUS_CODE = 'STATUS_CODE6'
+		 WHERE ORDER_OPTION_CODE = #{ order_option_code }
+	</update>
+	<!-- 교환요청 날짜 -->
+	<update id="requestExchange_date" parameterType="_int">
+		UPDATE ORDER_OPTION
+			   SET PURCHASE_CONFIRM_DATE = SYSDATE
+			 WHERE ORDER_OPTION_CODE = #{ order_option_code }
+	</update>
+	
+	<!-- 교환요청 개수 -->
+	<select id="countEx_list" parameterType="_int" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM EXCHANGE
+		 JOIN ORDER_OPTION USING(ORDER_OPTION_CODE)
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		WHERE USER_NO = #{ user_no }
+	</select>
+	
+	<!-- 교환요청 리스트 -->
+	<select id="selectEx_list" parameterType="_int" resultMap="exchangeResultMap">
+			SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM(SELECT 
+		        EX_NO,
+		        ORDER_OPTION_CODE,
+		        EX_ID,
+		        EX_REASON,
+		        EX_STATUS,
+		        EX_OPTION,
+		        EX_DATE,
+		        P_NAME
+		      FROM EXCHANGE
+		      JOIN EXCHANGE_CATEGORY USING(EX_ID)
+		      JOIN ORDER_OPTION USING(ORDER_OPTION_CODE)
+		      JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+		      JOIN PRODUCT USING(P_NO)
+		      JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		     WHERE USER_NO = #{ user_no }
+		    ORDER BY EX_NO DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="selectExchange" parameterType="_int" resultMap="exchangeResultMap">
+		SELECT	
+			 	EX_NO,
+			    ORDER_OPTION_CODE,
+			    EX_ID,
+			    EX_REASON,
+			    EX_STATUS,
+			    EX_OPTION,
+			    P_COLOR,
+			    P_SIZE,
+			    EX_NAME
+			 FROM EXCHANGE
+             JOIN EXCHANGE_CATEGORY USING(EX_ID)
+             JOIN PRODUCT_OPTION ON (P_OPTION_NO = EX_OPTION)
+		    WHERE ORDER_OPTION_CODE = #{ order_option_code }
+	</select>
+	
+	<select id="selectPayment" parameterType="String" resultMap="paymentResultMap">
+		SELECT
+			PAY_CODE,
+			ORDER_CODE,
+			IMP_UID,
+			MERCHANT_UID,
+			PAY_MONEY,
+			PAY_MEANS,
+			PAY_CARD_NAME,
+			PAY_CARD_NUM,
+			PAY_REFUND
+		  FROM PAYMENT
+		 WHERE MERCHANT_UID = #{ merchant_uid }
+	</select>
+	
+	<!-- 결제취소 상태변경1 -->
+	<update id="o_o_status" parameterType="String">
+		UPDATE ORDER_OPTION
+		   SET ORDER_STATUS_CODE = 'STATUS_CODE9'
+		 WHERE ORDER_CODE = (SELECT 
+		                        ORDER_CODE
+		                      FROM PAYMENT
+		                     WHERE MERCHANT_UID = #{ merchant_uid_Value })
+	</update>
+	
+	<!-- 결제취소 상태변경2 -->
+	<update id="p_o_status" parameterType="String">
+		UPDATE PRODUCT_ORDER
+		   SET ORDER_MODIFY_DATE = SYSDATE
+		 WHERE ORDER_CODE = (SELECT 
+		                        ORDER_CODE
+		                      FROM PAYMENT
+		                     WHERE MERCHANT_UID = #{ merchant_uid_Value })
+	</update>
+	
+	<!-- 결제취소 상태변경3 -->
+	<update id="payment_status" parameterType="String">
+		UPDATE PAYMENT
+		   SET PAY_REFUND = 'Y'
+		 WHERE  MERCHANT_UID = #{ merchant_uid_Value }
+	</update>
+	
+	<!-- 결제취소 상태변경할 order_option_code목록 -->
+	<select id="selectO_Olist" parameterType="String" resultMap="order_option_listResultMap">
+		SELECT 
+		        ORDER_OPTION_CODE
+		       FROM PAYMENT
+		       JOIN ORDER_OPTION USING(ORDER_CODE)
+		     WHERE MERCHANT_UID = #{ merchant_uid_Value }
+	</select>
+	
+	<!-- 결제취소 후 재고 원래대로 -->
+	<update id="stock_Status" parameterType="_int">
+	UPDATE PRODUCT_OPTION
+	   SET P_STOCK = P_STOCK + (SELECT 
+	                                ORDER_PRODUCT_NUM 
+	                                FROM ORDER_OPTION
+	                                WHERE ORDER_OPTION_CODE = #{ order_option_code })
+	  WHERE P_OPTION_NO = (SELECT
+	                            P_OPTION_NO
+	                            FROM ORDER_OPTION
+	                            WHERE ORDER_OPTION_CODE = #{ order_option_code })
+	</update>
+	
+	<!-- 결제취소 시 사용한 포인트 차감 취소 -->
+	<insert id="cancle_usePoint" parameterType="String">
+		INSERT INTO POINT
+			(
+			    POINT_NO,
+			    ORDER_CODE,
+			    POINT_CODE,
+			    POINT,
+			    POINT_DATE,
+			    USER_NO,
+			    REC_USER
+			)
+			VALUES
+			(
+			    SEQ_POINT_NO.NEXTVAL,
+			    (SELECT ORDER_CODE FROM PAYMENT WHERE MERCHANT_UID = #{ merchant_uid_Value }),
+			    6,
+			    ABS((SELECT POINT FROM POINT WHERE ORDER_CODE = (SELECT ORDER_CODE FROM PAYMENT WHERE MERCHANT_UID = #{ merchant_uid_Value }) 
+			    							   AND POINT_CODE = 3)),
+			    SYSDATE,
+			    (SELECT USER_NO FROM PAYMENT JOIN PRODUCT_ORDER USING(ORDER_CODE) WHERE MERCHANT_UID = #{ merchant_uid_Value }),
+			    NULL
+			)
+	</insert>
+	
+	<!-- 리뷰 수정 -->
+	<update id="reviewModify" parameterType="com.kh.clendy.mypage.model.vo.Review">
+		UPDATE REVIEW
+		   SET R_TITLE = #{ r_title },
+		       SCORE = #{ score },
+		       OPEN_SIZE = #{ open_size },
+		       R_CONTENT = #{ r_content },
+		       R_MODIFY_DATE = SYSDATE
+		 WHERE R_NO = #{ r_no }
+	</update>
+	
+	<!-- 리뷰 삭제 전 날짜 확인 -->
+	<select id="reviewDate" parameterType="_int" resultMap="reviewResultMap">
+			SELECT 
+		    R_NO
+		 FROM REVIEW
+		 WHERE ORDER_OPTION_CODE = #{ order_option_code }
+		   AND TO_DATE(SYSDATE, 'YYYY/MM/DD') > 
+		   			(SELECT TRUNC(TO_DATE((SELECT R_CREATE_DATE FROM REVIEW WHERE ORDER_OPTION_CODE = #{ order_option_code }), 'YYYY/MM/DD')) + 30 FROM DUAL) 
+	</select>
+	
+	<!-- 포인트 총합 -->
+	<select id="selectTotalPoint" parameterType="_int" resultType="_int">
+		SELECT
+		    NVL(SUM(POINT), 0) TOTALPOINT
+		 FROM POINT 
+		WHERE USER_NO = #{ user_no }
+	</select>
+	
+	<!-- 배송중 상품 개수 -->
+	<select id="selectDel_cnt" parameterType="_int" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_STATUS_CODE = (SELECT ORDER_STATUS_CODE FROM ORDER_STATUS WHERE ORDER_STATUS_NAME = '배송중')
+	</select>
+	
+	<!-- 배송완료 상품 개수 -->
+	<select id="selectDel_Complete_cnt" parameterType="_int" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_STATUS_CODE = (SELECT ORDER_STATUS_CODE FROM ORDER_STATUS WHERE ORDER_STATUS_NAME = '배송완료')
+	</select>
+	
+	<!-- 취소/반품 상품 개수 -->
+	<select id="selectCancle_cnt" parameterType="_int" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_STATUS_CODE IN (SELECT ORDER_STATUS_CODE 
+                                    FROM ORDER_STATUS 
+                                   WHERE ORDER_STATUS_NAME IN ('환불신청','교환신청', '환불완료', '교환완료', '결제취소'))
+	</select>
+	
+	<!-- 리뷰 삭제 -->
+	<update id="reviewDelete" parameterType="_int">
+		UPDATE REVIEW
+		   SET R_STATUS = 'N'
+		 WHERE ORDER_OPTION_CODE = #{ order_option_code }
+	</update>
+	
+	<!-- 위시리스트 개수 -->
+	<select id="countWishList" parameterType="map" resultType="_int">
+		SELECT    
+		    COUNT(*)
+		 FROM WISHLIST
+		 JOIN PRODUCT USING(P_NO)
+		WHERE USER_NO = #{ user_no }
+		  AND CATEGORY_CODE IN (SELECT CATEGORY_CODE FROM PRODUCT_CATEGORY WHERE CATEGORY_NAME = #{ category_name })
+	</select>
+	
+	<!-- 위시리스트 카테고리검색 -->
+	<select id="selectWishlist" parameterType="map" resultMap="wishListResultMap">
+		SELECT
+			*
+			FROM(
+			SELECT
+		ROWNUM ROWN
+		, TBL.*
+		FROM( SELECT 
+		        USER_NO
+              , P_NO
+              , P_NAME
+              , P_PRICE
+              , P_STATUS
+              , CATEGORY_NAME
+              , ROUTE
+              , IMG_NAME
+              , IMG_R_NAME
+		    FROM WISHLIST
+		    JOIN PRODUCT USING (P_NO)
+		    JOIN PRODUCT_CATEGORY USING(CATEGORY_CODE)
+		    JOIN PRODUCT_IMAGE USING(P_NO)
+		    JOIN IMAGE USING(IMG_NO)
+		   WHERE USER_NO = #{ user_no }
+             AND CATEGORY_NAME = #{ category_name }
+		     AND IMG_LEVEL = 0
+		     AND P_STATUS = 'Y'
+		     ORDER BY CREATE_DATE DESC ) TBL)
+    	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}	
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

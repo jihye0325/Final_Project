@@ -1,0 +1,288 @@
+div { 
+    borde: 1px solid black;
+}
+
+span { 
+    borde: 1px solid black;
+}
+
+.outer {
+    width: 1000px;
+    min-height : 400px;
+    margin: auto;
+    
+}
+
+.title {
+    font-size: x-large;
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 2px solid black;
+    margin-bottom: 15px;
+}
+
+.info_search_area {
+	background-color : #e6e6e6;
+	padding: 15px;
+	margin-bottom: 15px;
+}
+
+.info_area {
+	display:flex;
+	margin:auto;
+	margin-bottom: 20px;
+	text-align:center;
+	justify-content:center;
+}
+
+.img_count	{
+	text-align: center;
+	width: 120px;
+}
+.status_count {
+	font-weight: bold;
+}
+
+.delivery_count {
+	text-align:center;
+	display:flex;
+	justify-content: space-between;
+	margin-right: 25px;
+}
+
+.delivery_count img{
+	width: 100px;
+}
+
+#count {
+	margin:auto;
+	line-height: 80px;
+	font-size: xxx-large;
+	font-weight: bold;
+	margin-left: 15px;
+	background-color: #c7c6c6;
+	border-radius: 50px;
+    width: 80px;
+    height: 80px;
+}
+
+.delivery_complete_count {
+	text-align:center;
+	display:flex;
+	justify-content: space-between;
+	margin-right: 25px;
+}
+
+.delivery_complete_count img{
+	width: 80px;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+.cancle_count {
+	text-align:center;
+	display:flex;
+	justify-content: space-between;
+}
+
+.cancle_count img{
+	width: 80px;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+.search_area {
+	display: flex;
+	width: 280px;
+	justify-content: space-between;
+	margin:auto;
+}
+
+.calendar {
+	display: flex;
+	margin-right: 30px;
+}
+
+select {
+	width: 100px;
+	height: 25px;
+}
+
+#search{
+	width: 50px;
+    height: 23px;
+    line-height: 23px;
+    background-color: #060032;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.info {
+    width: 800px;
+    font-size: small;
+    font-weight: bold;
+    color: gray;
+    margin-bottom: 10px;
+}
+
+.order_list {
+    border: 1px solid lightgray;
+}
+
+.order_list ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    borde: 1px solid black;
+    margin: 0px;
+    padding: 0px;
+}
+
+.ul_header li {
+    borde: 1px solid black;
+    margin: 0px;
+    padding: 0px;
+}
+
+.ul_content li{
+    padding: 15px;
+    font-size: 15px;
+}
+
+.ul_header {
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    border-bottom: 1px solid lightgray;
+}
+
+.pname{
+    width: 300px;
+}
+
+.pname_area{
+    display: flex;
+}
+
+img{
+    width: 100px;
+    margin-right: 10px;
+}
+
+.p_info {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#pname {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.price{
+    width: 150px;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#origin_price{
+	text-decoration:line-through;
+}
+
+.order_no{
+    width: 150px;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#order_info {
+	padding: 2px;
+    margin-top: 10px;
+    background-color: white;
+    border: 1px solid gray;
+    font-size: small;
+    cursor: pointer;
+}
+
+.date {
+    width: 100px;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.pstatus {
+    width: 200px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.status_box {
+    display: flex;
+    justify-content: space-around;
+}
+
+.status_info {
+    text-align: center;
+}
+
+#status {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.review_info{
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.status_box button {
+    background-color: white;
+    border: 1px solid gray;
+    font-size: small;
+    cursor: pointer;
+    padding: 2px;
+}
+
+#disable_review_btn {
+	border: 1px solid lightgray;
+	color: lightgray;
+}
+
+.noReview {
+	border : 1px solid lightgray;
+	color: lightgray;
+}
+
+.pname a:link{
+    color: black;
+    text-decoration: none;
+}
+
+.pname a:visited{
+    color: black;
+    text-decoration: none;
+}
+
+.pname a:hover{
+    cursor: pointer;
+}
+
+/* 페이징 css */
+
+ul {
+	list-style: none;
+}
+
+.pagaing_wrap ul.pagaing_num li a:link{
+    text-decoration: none;
+}
+
+.pagaing_wrap ul.pagaing_num li a:visited{
+    text-decoration: none;
+}

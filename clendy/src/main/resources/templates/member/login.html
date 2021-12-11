@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/member/login.css" rel="stylesheet"></link>
+ 	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <title>로그인</title>
+ 	
+</head>
+<body>
+	<th:block th:if="${#request.getAttribute('msg') == 'fail'}">
+		<script>
+			alert('아이디랑 비밀번호를 확인해주세요.');
+		</script>
+	</th:block>
+	
+	<div th:replace="common/header.html"></div>
+	<!-- Spring Security의 formlogin 하는 경우 username, password로 꺼내므로 사용자 입력 양식의 name 속성 조심
+		 인증이 획득되지 않고 요청을 하면 로그인 페이지로 이동함! -->
+    <div class="title">
+        <img class="logo" src="/images/hanger.png">
+        <div>Clendy 로그인</div>
+    </div>
+
+    <div class="login_area">
+        <form th:action="@{/member/login}" name="loginForm" method="post">
+            <div class="id_area">
+                <span>아이디</span><br>
+                <input type="text" name="username" id="username" maxlength="15" placeholder="아이디를 입력해주세요" required>
+            </div>
+
+            <div class="pwd_area">
+                <span>비밀번호</span><br>
+                <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요" required>
+                <span id="imgarea"><img id="pwd_img" class="pwd_img" src="/images/show.png"></span>
+            </div>
+
+            <div class="login_btn">
+                <button type="button" onclick="login()">로그인</button>
+            </div>
+
+            <div class="login_option">
+                <div class="remember"> 
+                    <input type="checkbox" name="remember" id="rememberId">
+                    <label for="rememberId">아이디 기억하기</label>
+                </div>
+
+                <div class="find">
+                    <span onclick="findid()">아이디 찾기</span>
+                    <span>|</span>
+                    <span onclick="findPwd()">비밀번호 찾기</span>
+                    <span>|</span>
+                    <span><a href="/member/signUp">회원가입</a></span>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div th:replace="common/footer.html"></div>
+    
+    <!-- 로그인 -->
+    <script>
+    	function login(){
+    		var username = $("#username").val();
+    		var password = $("#password").val();
+    		var rememberId = $("#rememberId").is(":checked");
+    		
+    		if(username == "") {
+    			alert("아이디를 입력해주세요.");
+    			$("#username").focus();
+    		} else if(password == ""){
+    			alert("비밀번호를 입력해주세요.");
+    			$("#password").focus();
+    		} else {
+    			if(rememberId){
+    				setCookie("rememberId", username, 1);
+    			} else {
+    				deleteCookie("rememberId");
+    			}
+    			loginForm.submit();
+    		}
+    	}
+    </script>
+    
+    <!-- 아이디 찾기 -->
+    <script>
+    	function findid(){
+    		var popupWidth = 600;
+			var popupHeight = 350;
+	
+			var popupX = (window.screen.width / 2) - (popupWidth / 2);
+			var popupY= (window.screen.height / 2) - (popupHeight / 2);
+			
+			window.open("/member/findId", "아이디 찾기", 'status=no, height=' + popupHeight  + ', width=' + popupWidth  + ', left='+ popupX + ', top='+ popupY)
+		
+    	}
+    </script>
+    
+    <!-- 비밀번호 찾기 -->
+    <script>
+    	function findPwd(){
+    		var popupWidth = 600;
+			var popupHeight = 350;
+	
+			var popupX = (window.screen.width / 2) - (popupWidth / 2);
+			var popupY= (window.screen.height / 2) - (popupHeight / 2);
+			
+			window.open("/member/findPwd", "비밀번호 찾기", 'status=no, height=' + popupHeight  + ', width=' + popupWidth  + ', left='+ popupX + ', top='+ popupY)
+		
+    	}
+    </script>
+    
+    <!-- 비밀번호 보기 -->
+    <script>
+    	$('#imgarea').on('click', function(){
+    		$('#password').toggleClass('active');
+    		if($('#password').hasClass('active')){
+    			imgarea.innerHTML = '<img id="pwd_img" class="pwd_img" src="/images/blind.png">';
+    			$('#password').attr('type', "text");
+    		} else {
+    			imgarea.innerHTML = '<img id="pwd_img" class="pwd_img" src="/images/show.png">';
+    			$('#password').attr('type', "password");
+    		}
+    	});
+    </script>
+    
+    <!-- 아이디 기억하기 -->
+    <script>
+    	$(function(){
+    		var username = getCookie("rememberId");
+    		if(username){
+    			$("#username").val(username);
+    			$("#rememberId").attr("checked", true);
+    		}
+    	});
+    
+    	// 쿠키 생성
+    	function setCookie(name, value, exdays){
+    		var exdate = new Date();
+    		exdate.setDate(exdate.getDate() + exdays);
+    		var cookieValue = escape(value) + ((exdays==null) ? "" : "; expires=" + exdate.toGMTString());
+			document.cookie = name + "=" + cookieValue
+    	}
+    	
+		// 쿠키 가져오기
+		function getCookie(cookieName) { 
+			cookieName = cookieName + '='; 
+			var cookieData = document.cookie; 
+			var start = cookieData.indexOf(cookieName); 
+			var cookieValue = ''; 
+			if(start != -1){ 
+				start += cookieName.length; 
+				var end = cookieData.indexOf(';', start);
+				if(end == -1)end = cookieData.length; 
+				cookieValue = cookieData.substring(start, end); 
+			} 
+			return unescape(cookieValue); 
+		}
+
+		// 쿠키 제거
+		function deleteCookie(cookieName){ 
+			var expireDate = new Date(); 
+			expireDate.setDate(expireDate.getDate() - 1); 
+			document.cookie = cookieName + "=" + "; expires=" + expireDate.toGMTString(); 
+		}
+    	
+    </script>
+    
+    
+    
+    
+    
+    
+    
+</body>
+</html>

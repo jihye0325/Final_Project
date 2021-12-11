@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://www.thymeleaf.org"
+                xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 수정</title>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <!-- csrf -->
+    <meta name="_csrf" th:content="${_csrf.token}">
+	<meta name="_csrf_header" th:content="${_csrf.headerName}">
+	<!-- 썸머노트 -->
+	<script src="/css/summernote/summernote-lite.js"></script>
+	<script src="/css/summernote/lang/summernote-ko-KR.js"></script>
+	<link rel="stylesheet" href="/css/summernote/summernote-lite.css">
+	<!-- CSS --> 
+    <link href="/css/CScenter/insertBoard.css" rel="stylesheet">
+    
+</head>
+<body>
+    <div th:replace="common/header.html"></div>
+
+    <div id="wrapper">
+        <div id="sidebar">
+            <ul>
+                <li><a class="sideA " href="/CScenter/FAQ">FAQ</a></li>
+                <li><a class="sideA current" href="/CScenter/board">공지사항</a></li>
+                <li><a class="sideA" href="/CScenter/personalQ">1:1문의</a></li>
+            </ul>
+        </div>
+        <div id="content">
+            <h3 id="content-title">공지사항 수정</h3>
+        	
+        	<form th:action="@{/CScenter/board/modify}" method="post">
+            <div class="board-detail">
+                <div class="detail-title">
+                    <div class="title-wrapper"><label class="title">제목</label>
+                    <input type="hidden" name="b_no" th:value="${board.b_no}">
+                    <input type="text" name="b_title" class="name" maxlength="20" th:value="${board.b_title}" required></div>
+                </div>
+                <div class="board-content">
+					<textarea id="summernote" name="b_content" th:utext="${board.b_content}"></textarea>
+                </div>
+
+            </div>
+
+            <div class="btn-area">
+                <a class="to-list" href="/CScenter/board">목록</a>
+                <input type="submit" class="insert" value="수정완료">
+            </div>
+            </form>
+        </div>
+
+    </div>
+
+    
+    <div th:replace="common/footer.html"></div>
+    
+	<script>
+    $('#summernote').summernote({
+	    	width: 850,
+	        height: 340,                
+	        minHeight: null,            
+	        maxHeight: 340,             
+	        focus: true,
+	        lang: "ko-KR",
+	        toolbar: [
+			    ['fontname', ['fontname']],
+			    ['fontsize', ['fontsize']],
+			    ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
+			    ['color', ['forecolor','color']],
+			    ['table', ['table']],
+			    ['para', ['ul', 'ol', 'paragraph']],
+			    ['height', ['height']],
+			    ['insert',['picture','link','video']],
+			    ['view', ['fullscreen', 'help']]
+			  ],
+			fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+			fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']
+
+    	});
+		var token = $("meta[name='_csrf']").attr("content");
+	    var header = $("meta[name='_csrf_header']").attr("content");
+	    </script>
+
+
+</body>
+</html>

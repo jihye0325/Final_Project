@@ -1,0 +1,27 @@
+# server port config
+server:
+  port: 8800
+
+# oracle driver config  
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    username: clendy
+    password: clendy
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 사용할 이메일 주소
+    password: 사용할 이메일 주소의 비밀번호
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true 
+ 
+# mybatis config
+mybatis:
+  mapper-locations: mappers/**/*.xml
+  

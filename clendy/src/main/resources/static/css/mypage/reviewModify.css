@@ -1,0 +1,196 @@
+div { 
+    borde: 1px solid black;
+}
+
+.outer {
+    width: 935px;
+    margin: auto;
+    
+}
+
+.title {
+    font-size: x-large;
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 2px solid black;
+    margin-bottom: 20px;
+}
+
+.product {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+img {
+    width: 100px;
+}
+
+.product_info {
+    margin-left: 15px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#pname {
+    font-weight: bold;
+}
+
+.title_area {
+    height: 50px;
+    display: flex;
+    align-items:center;
+}
+
+.title_area span {
+    margin-left: 15px;
+    margin-right: 55px;
+}
+
+#r_title {
+    width: 350px;
+    height: 30px;
+    border: 1px solid lightgray;
+}
+
+.title_date_area {
+    height: 50px;
+    display: flex;
+    align-items:center;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    justify-content: space-between
+}
+
+.title_area span {
+    margin-left: 5px;
+    margin-right: 50px;
+}
+
+.title_date_area span:first-child{
+    font-weight: bold;
+}
+
+.date_area {
+    display: flex;
+}
+
+.create_date {
+    margin-right: 15px;
+}
+
+.like_cnt {
+    width: 935px;
+    height: 30px;
+    text-align: right;
+}
+
+.like_cnt > span {
+    border: 1px solid lightgray;
+    border-radius: 15px;
+    padding: 3px 10px 3px 10px;
+}
+
+.score {
+    border-bottom: 1px solid lightgray;
+    height: 35px;
+    display: flex;
+    align-items:center;
+}
+
+#score {
+	margin-left:15px;
+}
+
+.score span {
+	font-weight: bold;
+    margin-left: 5px;
+    margin-right: 55px;
+}
+
+.score img {
+    width: 20px;
+}
+
+select {
+	height: 25px;
+}
+
+.size {
+    border-bottom: 1px solid lightgray;
+    height: 35px;
+    display: flex;
+    align-items:center;
+    margin-bottom: 10px;
+}
+
+.size span {
+    margin-left: 5px;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+#size_info {
+    font-size: small;
+    color: gray;
+}
+
+.container {
+	width: 900px;
+}
+
+.btn_area {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn_area button {
+    background-color: #060032;
+    color: white;
+    font-size: large;
+    border: none;
+    width: 100px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.btn_area button:first-child{
+    margin-right: 10px;
+}
+
+/* 체크박스 색상 변경 */
+input[type="checkbox"] {
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: 1px solid gray;
+  background: white;
+  height: 12.8px;
+  width: 12.8px;
+  border: 1px solid white;
+}
+
+input[type="checkbox"]:checked {
+  background: #060032;
+}
+
+input[type="checkbox"]:hover {
+  filter: brightness(90%);
+}
+
+input[type="checkbox"]:after {
+  content: '';
+  position: relative;
+  left: 40%;
+  top: 20%;
+  width: 15%;
+  height: 40%;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  display: none;
+}
+
+input[type="checkbox"]:checked:after {
+  display: block;
+}

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.kh.clendy.reviewboard.model.dao.ReviewMapper">
+	<resultMap type="com.kh.clendy.reviewboard.model.vo.Review"
+		id="reviewAllList">
+		<id property="rNo" column="R_NO" />
+		<result property="pName" column="P_NAME" />
+		<result property="pNo" column="P_NO" />
+		<result property="pPrice" column="P_PRICE" />
+		<result property="pImgRName" column="IMG_R_NAME" />
+		<result property="id" column="ID" />
+		<result property="height" column="HEIGHT" />
+		<result property="weight" column="WEIGHT" />
+		<result property="rTitle" column="R_TITLE" />
+		<result property="rContent" column="R_CONTENT" />
+		<result property="gender" column="GENDER" />
+		<result property="ss" column="SS" />
+		<result property="cntlike" column="CNTLIKE" />
+		<result property="user_no" column="USER_NO" />
+		<result property="route" column="ROUTE" />
+		<result property="categoryName" column="CATEGORY_NAME" />
+		<result property="openSize" column="OPEN_SIZE" />
+		<result property="pColor" column="P_COLOR" />
+		<result property="pSize" column="P_SIZE" />
+	</resultMap>
+
+	<select id="reviewListCount" resultType="_int">
+		SELECT
+		COUNT(*) AS COUNT
+		FROM REVIEW
+		WHERE R_STATUS = 'Y'
+	</select>
+
+	<select id="selectReviewSearchList" parameterType="map"
+		resultMap="reviewAllList">
+		
+		SELECT
+					P.P_NAME
+					,P.P_NO
+					,P.P_PRICE
+					,PRI.IMG_R_NAME
+					,PRI.ROUTE
+					,M.ID
+					,M.HEIGHT
+					,M.WEIGHT
+					,R.R_TITLE
+					,R.R_CONTENT
+					,M.GENDER
+					,R.R_NO
+					,SVG.SS
+					,CNTLIKE
+					,PC.CATEGORY_NAME
+					,PO.P_COLOR
+					,PO.P_SIZE
+					,R.OPEN_SIZE
+                    ,PRI.IMG_LEVEL
+				FROM REVIEW R
+						LEFT OUTER JOIN ORDER_OPTION OO ON R.ORDER_OPTION_CODE = OO.ORDER_OPTION_CODE
+						LEFT OUTER JOIN PRODUCT_OPTION PO ON OO.P_OPTION_NO = PO.P_OPTION_NO
+						LEFT OUTER JOIN PRODUCT P ON PO.P_NO = P.P_NO
+						LEFT OUTER JOIN PRODUCT_IMAGE PI ON P.P_NO = PI.P_NO
+						LEFT OUTER JOIN IMAGE PRI ON PI.IMG_NO = PRI.IMG_NO
+						LEFT OUTER JOIN MEMBER M ON R.USER_NO = M.USER_NO
+						LEFT OUTER JOIN PRODUCT_CATEGORY PC ON P.CATEGORY_CODE = PC.CATEGORY_CODE
+						LEFT OUTER JOIN (
+										SELECT
+											PO2.P_NO
+											,AVG(SCORE) AS SS
+										FROM REVIEW R2
+											LEFT OUTER JOIN ORDER_OPTION OO2 ON	R2.ORDER_OPTION_CODE = OO2.ORDER_OPTION_CODE
+											LEFT OUTER JOIN	PRODUCT_OPTION PO2 ON PO2.P_OPTION_NO = OO2.P_OPTION_NO
+										GROUP BY PO2.P_NO) SVG ON SVG.P_NO = P.P_NO
+						LEFT OUTER JOIN (
+										SELECT
+										R_NO
+										,COUNT(R_NO) AS CNTLIKE
+										FROM REVIEW_LIKE
+										GROUP BY R_NO) CNT ON CNT.R_NO = R.R_NO
+                    					
+				WHERE R.R_STATUS = 'Y'
+				
+				AND	P.P_NAME LIKE '%'||#{keyword}||'%'
+						OR PC.CATEGORY_NAME LIKE '%'||#{keyword}||'%'
+                    AND	IMG_LEVEL = 0
+				ORDER BY CNTLIKE DESC NULLS LAST	
+		
+		
+	</select>
+	
+		
+	<select id="selectReviewAllList" parameterType="map"
+		resultMap="reviewAllList">
+		SELECT
+			*
+		FROM(
+			SELECT
+				ROWNUM ROWN
+				, TBL.*
+			FROM(
+				SELECT
+					P.P_NAME
+					,P.P_NO
+					,P.P_PRICE
+					,PRI.IMG_R_NAME
+					,PRI.ROUTE
+					,M.ID
+					,M.HEIGHT
+					,M.WEIGHT
+					,R.R_TITLE
+					,R.R_CONTENT
+					,M.GENDER
+					,R.R_NO
+					,SVG.SS
+					,CNTLIKE
+					,PC.CATEGORY_NAME
+					,PO.P_COLOR
+					,PO.P_SIZE
+					,R.OPEN_SIZE
+				FROM REVIEW R
+						LEFT OUTER JOIN ORDER_OPTION OO ON R.ORDER_OPTION_CODE = OO.ORDER_OPTION_CODE
+						LEFT OUTER JOIN PRODUCT_OPTION PO ON OO.P_OPTION_NO = PO.P_OPTION_NO
+						LEFT OUTER JOIN PRODUCT P ON PO.P_NO = P.P_NO
+						LEFT OUTER JOIN PRODUCT_IMAGE PI ON P.P_NO = PI.P_NO
+						LEFT OUTER JOIN IMAGE PRI ON PI.IMG_NO = PRI.IMG_NO
+						LEFT OUTER JOIN MEMBER M ON R.USER_NO = M.USER_NO
+						LEFT OUTER JOIN PRODUCT_CATEGORY PC ON P.CATEGORY_CODE = PC.CATEGORY_CODE
+						LEFT OUTER JOIN (
+										SELECT
+											PO2.P_NO
+											,AVG(SCORE) AS SS
+										FROM REVIEW R2
+											LEFT OUTER JOIN ORDER_OPTION OO2 ON	R2.ORDER_OPTION_CODE = OO2.ORDER_OPTION_CODE
+											LEFT OUTER JOIN	PRODUCT_OPTION PO2 ON PO2.P_OPTION_NO = OO2.P_OPTION_NO
+										GROUP BY PO2.P_NO) SVG ON SVG.P_NO = P.P_NO
+						LEFT OUTER JOIN (
+										SELECT
+										R_NO
+										,COUNT(R_NO) AS CNTLIKE
+										FROM REVIEW_LIKE
+										GROUP BY R_NO) CNT ON CNT.R_NO = R.R_NO
+                    					
+				WHERE R.R_STATUS = 'Y'
+				AND	PRI.IMG_LEVEL = 0
+				ORDER BY CNTLIKE DESC NULLS LAST
+				)
+		 	TBL
+		 	)
+		WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+		
+	</select>	
+</mapper>

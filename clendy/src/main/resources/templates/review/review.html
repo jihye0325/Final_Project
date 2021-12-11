@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+<link rel="stylesheet" href="/css/reviewBoard/reset.css" type="text/css">
+<link rel="stylesheet" href="/css/common/paging.css">
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet"> 
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script src=" https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/lang/summernote-ko-KR.min.js"></script>
+  
+  
+<style>
+.searchdiv {
+	float: right;
+}
+
+.searcharea::after {
+	content: '';
+	clear: both;
+	display: block;
+}
+
+.searchbar {
+	width: 125px;
+	height: 40px;
+}
+
+.reviewBoard {
+	margin-left: 100px;
+	width: 1050px;
+	height: 50%;
+}
+
+.wrapper1 {
+	width: 100%;
+}
+
+.container {
+	width: 1400px;
+	margin: 0 auto;
+	padding: 70px 0;
+}
+
+.productinfo li {
+	margin-left: 20px;
+}
+
+ul{
+	list-style: none;
+}
+
+.rcontent p{
+	height: 150px;
+}
+.rcontent p img{
+	height: 120px;
+	padding: 10px;
+	float: right;
+	
+}
+</style>
+</head>
+
+<body>
+	<div th:replace="common/header.html"></div>
+	<div class="wrapper1" style="height: 100%;">
+		<div class="container">
+		
+			
+			<div style="margin-left: 100px;">
+				<h1>리뷰 모아보기</h1>
+			</div>
+			
+			<div class="reviewBoard">
+				<form class="searcharea" th:action="@{/review/reviewSearch}"
+					method="get">
+					<div class="searchdiv">
+						<input type="search" name="keyword" title="검색" class="searchbar2"
+							placeholder="상품이름,카테고리 입력">
+						<button class="searchButton" type="submit">
+							<img src="/images/돋보기.png"
+								style="width: 40px; height: 40px; vertical-align: middle;">
+						</button>
+					</div>
+				</form>
+				<div th:if="${reviewList != null and #lists.size(reviewList) > 0}">
+					<ul style="list-style: none;" th:each="Review, index:${reviewList}">
+						<li>
+							<div
+								style="height: 50%; border-style: solid; border-width: 1px 1px; padding-right: 20px; margin-bottom: 10px;">
+								<span class="username"
+									style="margin-top: 10px; font-size: 20px; float: left; margin-left: 20px; font-weight: bolder;"
+									th:text="${Review.id}"></span>
+									
+									<span class="like" style="float: right; font-size: 20px; padding: 10px; margin-top: 10px; border-style: double; border-radius: 20px; border-width: 1px 1px;" th:text="|🧡 ${Review.cntlike}|">
+										</span>
+									
+									
+									 <br>
+									  <br>
+									 
+								  <span style="margin-left: 20px; color: gray;"
+									th:if="${Review.openSize}=='Y'"
+									th:text="|${Review.gender}성,${Review.height}cm,${Review.weight}kg|"></span>
+								<span style="margin-left: 20px; color: gray;"
+									th:if="${Review.openSize}=='N'" th:text="|정보 비공개|"></span>
+								<div style="margin-top: 10px;">
+									<ul class="productinfo">
+										<li style="list-style: none; float: left;"><a
+											th:href="@{'/product/view/' + ${Review.pNo}}">
+											<img th:src="${Review.route}+${Review.pImgRName}" style="width: 100px; margin-left: 20px;"></a></li>
+										<li style="list-style: none; float: left;">
+											<ul style="list-style: none; font-size: 20px; color: grey;">
+												<li th:text="${Review.pName}"></li>
+												<li th:text="${Review.pPrice}"></li>
+												<li>별점: <img src="/images/star_yes.png"> <th:block
+														th:if="${Review.ss >= 2}">
+														<img src="/images/star_yes.png">
+													</th:block> <th:block th:if="${Review.ss >= 3}">
+														<img src="/images/star_yes.png">
+													</th:block> <th:block th:if="${Review.ss >= 4}">
+														<img src="/images/star_yes.png">
+													</th:block> <th:block th:if="${Review.ss == 5}">
+														<img src="/images/star_yes.png">
+													</th:block>
+												</li>
+												<li th:text="|${Review.pSize} / ${Review.pColor}구매|"></li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+								<div style="margin-left: 20px; height: 30%; padding: 10px;">
+								<div class="rcontent"style="margin-left: 20px; height: 30%; margin-top: 140px; word-break: break-all; font-size: 20px;"	th:utext="${Review.rContent}" ></div>
+							</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				 <div th:unless="${#lists.size(reviewList) > 0}">
+					<h1>검색 결과가 없습니다.</h1>
+				</div>
+			
+			
+			<!-- 페이징 -->
+            <div class="pagaing_wrap" th:if="${#lists.size(reviewList) > 0}">
+                        <ul class="pagaing_left">
+                            <li class="allPrev" th:classappend="${pi.page == 1} ? 'hide'">
+                            	<a th:href="@{/review/review/(page=1)}" th:if="${pi.page > 1}"></a>
+	                            <a href="javascript:;" th:unless="${pi.page > 1}"></a>
+	                            
+                            </li>
+                            <li class="prev" th:classappend="${pi.page == 1} ? 'hide'">
+	                            <a th:href="@{/review/review/(page=${pi.page - 1})}" th:if="${pi.page > 1}"></a>
+                            	<a href="javascript:;" th:unless="${pi.page > 1}"></a>
+                            </li>
+                        </ul>
+                        
+                        <ul class="pagaing_num">
+                        	<th:block th:each="pd : ${#numbers.sequence(pi.startPage, pi.endPage)}">
+                        		<li th:classappend="${pi.page == pdStat.current} ? 'on'">
+                        			<a th:href="@{/review/review/(page=${pdStat.current})}" th:text="${pdStat.current}"></a>
+                        		</li>
+                        	</th:block>
+                            
+                        </ul>
+
+                        <ul class="pagaing_right" >
+                            <li class="next" th:classappend="${pi.page == pi.maxPage} ? 'hide'">
+                            	<a th:href="@{/review/review/(page=${pi.page} + 1)}" th:if="${pi.page < pi.maxPage}"></a>
+                            	<a href="javascript:;" th:unless="${pi.page < pi.maxPage}"></a>
+                            </li>
+                            <li class="allNext"  th:classappend="${pi.page == pi.maxPage} ? 'hide'">
+                            	<a th:href="@{/review/review/(page=${pi.maxPage})}" th:if="${pi.page < pi.maxPage}"></a>
+                            	<a href="javascript:;" th:unless="${pi.page < pi.maxPage}"></a>
+                            </li>
+                        </ul>
+                    </div>
+			</div>
+		</div>
+		
+	</div>
+	<div th:replace="common/footer.html"></div>
+	<script>
+		$(".searchButton img").click(function() {
+			if ($(".searchbar2").val() == "") {
+				alert("검색어를 입력해주세요.");
+				return false;
+			}
+		});
+		$(".searchbar").keydown(function(key) {
+			if (key.keyCode == 13) {
+				if ($(".searchbar2").val() == "") {
+					alert("검색어를 입력해주세요.");
+					return false;
+				}
+			}
+		});
+	</script>
+</body>
+</html>

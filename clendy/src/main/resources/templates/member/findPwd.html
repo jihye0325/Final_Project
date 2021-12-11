@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/member/findPwd.css" rel="stylesheet"></link>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <title>비밀번호 찾기</title>
+    <script>
+		const msg = '[[${ msg }]]';
+		
+		if(msg){
+			if(msg == '성공'){
+				alert("해당 이메일로 임시비밀번호가 발송되었습니다.\n임시비밀번호로 로그인해주세요.");
+				window.opener.location.href = window.opener.document.URL;
+				window.close();
+			} else {
+				alert(msg);
+			}
+		}
+	</script>
+</head>
+<body>
+    <div class="title">
+        <img class="logo" src="/images/hanger.png">
+        <div>Clendy 비밀번호 찾기</div>
+    </div>
+
+    <div class="content">
+        <div class="menu_tab">
+            <button type="button" name="id_findtab">
+                <a th:href="@{'/member/findId'}">아이디 찾기</a>
+            </button>
+            <button type="button" name="pwd_findtab">
+                <a th:href="@{'/member/findPwd'}">비밀번호 찾기</a>
+            </button>
+        </div>
+
+        <div class="input_area">
+            <form th:action="@{/member/findPwd}" name="findPwd" id="findPwd" method="post">
+                <div class="idarea">
+                    <span>아이디</span><br>
+                    <input type="text" name="id" id="id" placeholder="아이디를 입력해주세요" required>
+                </div>
+
+                <div class="email_area">
+                    <span>이메일</span><br>
+                    <input type="email" name="email" id="email" placeholder="이메일을 입력해주세요" required>
+                </div>
+
+                <button type="button" id="checkEmail" onclick="sendEmail()">비밀번호 찾기</button>
+            </form>
+        </div>
+    </div>
+   
+    <script>
+    	function sendEmail(){
+    		if($("#id").val() == "") {
+    			alert("아이디를 입력해주세요.");
+    			$("#id").focus();
+    			return;
+    		} else if($("#email").val() == "") {
+    			alert("이메일을 입력해주세요.");
+    			$("#email").focus();
+    			return;	
+    		}
+    		
+    		// 이메일 형식 확인
+    		var emailCheck = false;
+    		var emailValue = $("#email").val();
+    		emailCheck = email_Confirm(emailValue);
+    		
+    		if(!emailCheck){
+    			alert("이메일 형식을 확인해주세요.");
+    		}
+    		
+    		if(emailCheck){
+        		var form = $("#findPwd");
+        		var email = $("#email").val();
+        		if(!confirm("*입력하신 이메일이 맞는지 확인해주세요.*" + "\n"+ email + "로 임시비밀번호를 발송하시겠습니까?\n임시번호가 발급되면 임시비밀번호로 로그인이 가능합니다.")) return;
+        		
+        		form.submit();
+    		}
+    	}
+    	 
+    	function email_Confirm(email){
+    		var regExp = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+	    	return regExp.test(email);
+    	}
+    </script>
+</body>
+</html>

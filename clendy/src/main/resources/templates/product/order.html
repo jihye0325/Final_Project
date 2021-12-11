@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+			    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+	<!-- default header name is X-CSRF-TOKEN -->
+	<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>상품 주문 페이지</title>
+    <link rel="stylesheet" th:href="@{/css/product_style.css}">
+    <!-- <script th:src="@{/js/jquery-3.6.0.min.js}"></script> -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+    <script th:src="@{/js/product_common.js}"></script>
+    <script src="https://d1p7wdleee1q2z.cloudfront.net/post/search.min.js"></script>
+    <style>
+    	#nav-wrapper{margin-bottom:0 !important;}
+    </style>
+</head>
+<body>
+    <div id="wrap">
+         <div th:replace="common/header.html"></div>
+
+        <section id="order">
+            <div class="container">
+                <div class="order">
+                    <div class="order_wrap">
+                        <div class="order_view">
+                            <h2>주문결제</h2>
+                            <div class="item">
+                                <h3 class="order_title">배송정보</h3>
+                                <div class="post_wrap">
+                                    <div class="radio_wrap">
+                                        <div class="radio_item">
+                                            <input type="radio" name="post_info" id="basic" value="basic" checked>
+                                            <label for="basic">기본배송지</label>
+                                        </div>
+                                        <div class="radio_item">
+                                            <input type="radio" name="post_info" id="directly" value="directly">
+                                            <label for="directly">직접입력</label>
+                                        </div>
+                                    </div>
+                                    <div class="post_info_wrap">
+                                        <div class="exist_box">
+                                            <h4 class="name" th:text="${postMember.user_name}">홍길동</h4>
+                                            <p class="address" th:text="${postMember.address}">(30130) 세종특별자치시 한누리대로 161(나성동)</p>
+                                            <p class="tel" th:text="${postMember.phone}">010-1234-5678</p>
+                                        </div>   
+                                        <div class="new_exist_box"  style="display:none;">
+                                            <dl>
+                                                <dt>이름</dt>
+                                                <dd>
+                                                    <input type="text" name="" id="" class="name">
+                                                </dd>
+                                                <dt>주소</dt>
+                                                <dd>
+                                                    <input type="text" name="" id="" class="add1 postcodify_postcode5" readonly>
+                                                    <a href="javascript:;" class="add_btn">주소찾기</a>
+                                                    <input type="text" name="" id="" class="add2 postcodify_address">
+                                                    <input type="text" name="" id="" class="add3 postcodify_details">
+                                                </dd>
+                                                <dt>연락처</dt>
+                                                <dd>
+                                                    <div class="post_tel_wrap">
+                                                        <select name="tel_one" id="tel_one">
+                                                            <option value="010">010</option>
+                                                            <option value="011">011</option>
+                                                            <option value="016">016</option>
+                                                            <option value="017">017</option>
+                                                            <option value="019">019</option>
+                                                        </select>
+                                                        <span>-</span>
+                                                        <input type="text" name="tel_two" id="tel_two">
+                                                        <span>-</span>
+                                                        <input type="text" name="tel_three" id="tel_three">
+                                                    </div>
+                                                </dd>
+                                            </dl>
+                                        </div>    
+                                    </div>
+
+                                    <div class="post_request">
+                                        <select name="post_request" id="post_request">
+                                            <option value="choice">배송요청사항 선택</option>
+                                            <option value="직접 수령하겠습니다.">직접 수령하겠습니다.</option>
+                                            <option value="문 앞에 놓아주세요">문 앞에 놓아주세요</option>
+                                            <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
+                                            <option value="배송 전 휴대폰으로 연락주세요">배송 전 휴대폰으로 연락주세요</option>
+                                            <option value="파손위험이 있는 상품이니 조심히 다뤄주세요">파손위험이 있는 상품이니 조심히 다뤄주세요</option>
+                                            <option value="edit">직접 입력</option>
+                                        </select>
+                                        <input type="text" name="post_edit" id="post_edit" style="display:none;">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <h3 class="order_title">주문내역</h3>
+                                <div class="order_list_wrap">
+                                    <div class="order_list">
+                                    	<th:block th:each="entry : ${orderInfo}">
+                                    		<h4 class="mall_name" th:text="${entry.value[0].sellerName}">일번 쇼핑몰</h4>
+	                                        <div class="order_list order_list_box">
+	                                            <div class="list" th:each="list : ${entry.value}" >
+	                                               <div class="list_left">
+	                                                   <div class="img">
+	                                                       <img th:src="@{${list.orderImage.route} + ${list.orderImage.imgrName}}" alt="">
+	                                                   </div>
+	                                                   <p class="title" th:text="${list.pName}">긴팔 셔츠/체크/스트라이프/캐주얼/오버핏/빅 사이즈</p>
+	                                                   <p class="option" th:text="|${list.pColor} / ${list.pSize}|">캐쥬얼 긴팔 셔츠 / 화이트 / L</p>
+	                                                   <input type="hidden" name="pOptionNo" th:value="${list.pOptionNo}">
+	                                                   <div class="list_quan">
+	                                                       <input type="text" name="cartMount" id="" th:value="${list.cartMount}" readonly>
+	                                                       개
+	                                                   </div>
+	                                               </div>
+	                                               <div class="list_center">
+	                                                   <p th:with="perwon = ${(list.pPrice - (list.pPrice * (list.pDiscount / 100.0))) * list.cartMount}">
+	                                                   		<span th:text="${#numbers.formatInteger(perwon, 3, 'COMMA')}">31,500</span>원
+	                                                   </p>
+	                                               </div>
+	                                               <div class="list_right">
+	                                               		<div class="list_right_box">
+		                                                   <p class="post_price" >
+		                                                   		<th:block th:if="${#aggregates.sum(entry.value.![(pPrice - (pPrice * (pDiscount / 100.0))) * cartMount]) >= 80000}">
+		                                                   			무료배송
+		                                                   		</th:block>
+		                                                   		<th:block th:unless="${#aggregates.sum(entry.value.![(pPrice - (pPrice * (pDiscount / 100.0))) * cartMount]) >= 80000}">
+		                                                   			<span>2,500</span>원
+		                                                   		</th:block>
+		                                                   </p>
+		                                                   		
+		                                                   <a href="javascript:;" class="post_tip">
+		                                                   		배송비
+		                                                   </a>
+	                                                   </div>
+	                                               </div>
+	                                            </div>
+	                                        </div>
+                                    	</th:block>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <h3 class="order_title">할인/포인트</h3>
+                                <div class="sale_wrap">
+                                    <dl>
+                                        <dt>포인트사용</dt>
+                                        <dd>
+                                            <div class="input_box">
+                                                <input type="text" name="point" id="point" value="0" data-min="0" th:data-max="${point}" th:if="${point > 0}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                <input type="text" name="point" id="point" value="0" th:unless="${point > 0}" readonly>
+                                                <span>원</span>
+                                            </div>
+                                            <p class="point_txt">
+                                               사용가능포인트 
+                                               <span th:text="${#numbers.formatInteger(point, 3, 'COMMA')}" th:if="${point > 1000}">3,000</span>
+                                               <span th:text="${point}" th:unless="${point > 1000}">3,000</span>P
+                                            </p>
+                                        </dd>
+                                    </dl>
+
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <h3 class="order_title">결제방식</h3>
+                                <div class="pay_wrap">
+                                    <a href="javascript:;" class="on">신용카드</a>
+                                    <!-- <a href="javascript:;">간편결제</a> -->
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="order_status">
+                            <div class="item">
+                                <h3>결제 금액</h3>
+                                <div class="order_price">
+                                    <p class="title">상품금액</p>
+                                    <p class="txt"><span th:text="${#numbers.formatInteger(payPrice.productPrice, 3, 'COMMA')}">121,500</span>원</p>
+                                </div>
+                                <div  class="order_post">
+                                    <p class="title">배송비</p>
+                                    <p class="txt">
+                                    <span th:text="${#numbers.formatInteger(payPrice.productPost, 3, 'COMMA')}" th:if="${payPrice.productPost > 0}">2,500</span>
+                                    <span th:unless="${payPrice.productPost > 0}">0</span>원</p>
+                                </div>
+                                <div class="order_point">
+                                    <p class="title">포인트사용 금액</p>
+                                    <p class="txt">(-)<span>0</span>원</p>
+                                </div>
+                                <div  class="order_allPrice">
+                                    <p class="title">총 결제금액</p>
+                                    <p class="txt"><span>124,000</span>원</p>
+                                </div>
+
+                                <div class="btn_wrap">
+                                    <button type="button" onclick="pay();">결제하기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div th:replace="common/footer.html"></div>
+    </div>
+    
+    <script th:inline="javascript">
+        $(function(){
+        	// 휴대전화 정규화
+        	let userPhone = [[${postMember.phone}]].replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3");
+			$(".exist_box .tel").text(userPhone);
+
+            // 배송정보 이벤트
+            $("input[name=post_info]").change(function(){
+               let value = $(this).val();
+
+               if(value == 'basic'){
+                   $('.new_exist_box').css("display","none");
+                   $('.exist_box').css("display","block");
+               }else if(value == 'directly'){
+                   $('.exist_box').css("display","none");
+                   $('.new_exist_box').css("display","block");
+               }
+
+            });
+
+            // 배송요청사항 이벤트
+            $("#post_request").change(function(){
+                if($(this).val() == 'edit'){
+                    $('#post_edit').css('display','block');
+                }else{
+                    $('#post_edit').css('display','none');
+                }
+            })
+
+            // 주소찾기 API
+            $(".add_btn").postcodifyPopUp();
+
+            // 결제방식 이벤트
+            $('.pay_wrap a').click(function(){
+                $('.pay_wrap a').removeClass("on");
+                $(this).addClass("on");
+            })
+            
+            // 포인트 사용
+            $(".sale_wrap dl dd .input_box input").on("propertychange change keyup paste input", function(event){
+            	let dataMin = 0;
+            	let dataMax = Number($(this).attr("data-max"));
+            	let dataCurrent = Number($(this).val());
+            	
+            	if(dataCurrent > dataMax){
+            		$(this).val(dataMax);
+            	}
+            	
+            	totalPriceHandler();
+            })
+
+
+            // 우측 결제내역 이벤트
+            let currentScroll = $(document).scrollTop();
+
+            let orderTop = $('.order .order_wrap').offset().top;
+
+            $(document).scroll(function(){
+                currentScroll = $(document).scrollTop();
+                optionScroll(currentScroll);
+            });
+
+            optionScroll(currentScroll);
+
+            // 우측 결제내역 스크롤 이벤트
+            function optionScroll(currentScroll){
+                if(orderTop <= currentScroll){
+                    $(".order .order_wrap .order_status").addClass("fixed");
+                }else{
+                    $(".order .order_wrap .order_status").removeClass("fixed");
+                }
+            }
+        });
+        
+        totalPriceHandler();
+        function totalPriceHandler(){
+        	let productPrice = Number('[[${payPrice.productPrice}]]');
+        	let productPost = Number('[[${payPrice.productPost}]]');
+        	// let couponPrice = Number($(".coupon_txt span").text().replace(',',''));
+        	let pointPrice = Number($(".sale_wrap dl dd .input_box input").val());
+        	
+        	let totalPrice = productPrice + productPost - pointPrice;
+        	
+        	// $(".order_coupon .txt span").text(couponPrice.toLocaleString('ko-KR'));
+        	$(".order_point .txt span").text(pointPrice.toLocaleString('ko-KR'));
+        	$(".order_allPrice .txt span").text(totalPrice.toLocaleString('ko-KR'));
+        	
+        	
+        }
+    </script>
+    
+    <script th:inline="javascript">
+    
+function pay(){
+	let title = "테스트입니다.";
+	let productCount = 0;
+	let listSize = $(".order_list_box").length;
+	for(let i = 0; i < listSize; i++){
+		productCount += $(".order_list_box").eq(i).find(".list").length;
+	}
+	
+	if(productCount > 1){
+		title = $(".order_list_box .list").eq(0).find(".title").text() + "외 " + (productCount-1) + "개";
+	}else{
+		title = $(".order_list_box .list").eq(0).find(".title").text();
+	}
+	
+	let amount = $('.order_allPrice .txt span').text();
+	let buyerName = [[${postMember.user_name}]];
+	let buyerTel = [[${postMember.phone}]];
+	let buyerAddr = [[${postMember.address}]];
+	let buyerEmail = "";
+	let postCheck = $("input[name=post_info]:checked").val();
+	let postRequest = $("#post_request option:selected").val();
+	let point = Number($("#point").val());
+	let postPrice = $(".order_post span").text();
+	let orderPrice = Number(($(".order_price .txt span").text()).replace(",",""));
+	
+	let pOptionNos = [];
+	let cartMounts = [];
+	
+	// 구매상품 담기
+	let orderListSize = $(".order_list_box").length;
+	
+	
+	for(let i = 0; i < orderListSize; i++){
+		let listSize = $(".order_list_box:eq("+i+") .list").length;
+		
+		for(let j = 0; j < listSize; j++){
+			pOptionNos.push(Number($(".order_list_box:eq("+i+") .list:eq("+j+") input[name=pOptionNo]").val()));
+			cartMounts.push(Number($(".order_list_box:eq("+i+") .list:eq("+j+") input[name=cartMount]").val()));	
+		}
+	}
+	
+	// 직접 입력 일시
+	 if(postCheck == 'directly'){
+		 buyerName = $(".new_exist_box .name").val();
+		 buyerAddr = $(".new_exist_box .add1").val() + ", " + $(".new_exist_box .add2").val() + ", " + $(".new_exist_box .add3").val();
+		 buyerTel = $("#tel_one option:selected").val() + $("#tel_two").val() + $("#tel_three").val();
+		 
+		 if(buyerName.length <= 0){
+			 alert("이름을 입력해주세요");
+			 
+			 return;
+		 }else{
+			 const regex = /^[가-힣]{2,5}$/;
+			 if(!regex.test(buyerName)){
+				 alert("이름은 2~5자 이내로 작성해주세요.")
+				 return; 
+			 }
+			 
+		 }
+		 
+		 if($(".new_exist_box .add1").val().length <= 0 && $(".new_exist_box .add2").val().length <= 0 && $(".new_exist_box .add3").val().length <= 0){
+			alert("주소를 입력해주세요");
+			
+			return;
+		 }
+		
+		 if($("#tel_two").val().length <= 0 && $("#tel_three").val().length <= 0){
+			 alert("연락처를 입력해주세요");
+			 
+			 return;
+		 }else{
+			 const regex = /^[0-9]{4}$/;
+			 
+			 if(!regex.test($("#tel_two").val())){
+				 alert("연락처를 숫자, 4자리로 입력해주세요!");
+				return;
+			 }
+			 
+			 if(!regex.test($("#tel_three").val())){
+				 alert("연락처를 숫자, 4자리로 입력해주세요!");
+				return;
+			 }
+		 }
+		 
+	 }
+	
+	// 배송요청 사항 선택안했을시
+	if(postRequest == 'choice'){
+		alert("배송요청 사항을 선택해주세요!");
+		return;
+	}
+	// 배송요청 사항 직접입력 일시
+	if(postRequest == 'edit'){
+		postRequest = $("#post_edit").val();
+		
+		let editCount = postRequest.length;
+		if(editCount <= 0){
+			alert("배송요청 사항을 입력해주세요.");
+			$("#post_edit").focus();
+			
+			return;
+		}
+		
+	}
+	
+	var IMP = window.IMP; // 생략가능
+	IMP.init("imp77229220");
+	IMP.request_pay({
+	pg: 'danal', // version 1.1.0부터 지원.
+	pay_method: 'card',
+	merchant_uid: 'merchant_' + new Date().getTime(),
+	name: title,
+	amount: amount, //amount
+	buyer_email: buyerEmail,
+	buyer_name: buyerName,
+	buyer_tel: buyerTel,
+	buyer_addr: buyerAddr,
+	buyer_postcode: buyerAddr,
+	// m_redirect_url: 'https://www.yourdomain.com/payments/complete'
+	/*
+	모바일 결제시,
+	결제가 끝나고 랜딩되는 URL을 지정
+	(카카오페이, 페이코, 다날의 경우는 필요없음. PC와 마찬가지로 callback함수로 결과가 떨어짐)
+	*/
+	}, function (rsp) {
+	if (rsp.success) {
+		/* var msg = '결제가 완료되었습니다.';
+		msg += '고유ID : ' + rsp.imp_uid;
+		msg += '상점 거래ID : ' + rsp.merchant_uid;
+		msg += '결제 금액 : ' + rsp.paid_amount;
+		msg += '카드 승인번호 : ' + rsp.apply_num; */
+		var msg = '결제가 완료되었습니다.';
+		/* var result = {
+			"imp_uid" : rsp.imp_uid,
+			"merchant_uid" : rsp.merchant_uid,
+			"biz_email" : rsp.buyer_email,
+			"pay_date" : new Date().getTime(),
+			"amount" : rsp.paid_amount,
+			"card_no" : rsp.apply_num,
+			"refund" : 'payed'
+		};  */
+		
+		var result = {
+				"imp_uid" : rsp.imp_uid,
+				"title" : title,
+				"amount" : amount,
+				"buyerName" : buyerName,
+				"buyerTel" : buyerTel,
+				"buyerAddr" : buyerAddr,
+				"biz_email" : rsp.buyer_email,
+				"postCheck" : postCheck,
+				"postRequest" : postRequest,
+				"point" : point,
+				"pay_date" : new Date().getTime(),
+				"postPrice" : postPrice,
+				"pOptionNos" : pOptionNos,
+				"cartMounts" : cartMounts,
+				"impUid" : rsp.imp_uid,
+				"merchantUid" : rsp.merchant_uid,
+				"cardName" : rsp.card_name,
+				"cardNumber" : rsp.card_number,
+				"payMethod" : rsp.pay_method,
+				"orderPrice" : orderPrice,
+		};
+		
+		$.ajax({
+			url : '/product/orderPay/', 
+	        type :'POST',
+	        data : JSON.stringify(result),
+	        contentType: "application/json; charset=utf-8",
+	        // dataType: 'json', //서버에서 보내줄 데이터 타입
+	        beforeSend : function(xhr){
+				xhr.setRequestHeader(header, token);
+			},
+	        success: function(res){
+	          // 카드결제에 성공하면 
+	          
+	          if(res = 'success') {
+	        	  location.href = "/product/orderComplete/";
+	          }else{
+	        	  alert("결제 실패하였습니다. 다시진행해주세요!");
+	          } 
+	        },
+	        error:function(error){
+	          console.log(error);
+	          console.log("Insert ajax 통신 실패!!!");
+	        }
+		})//ajax
+		
+	} else {
+		var msg = '결제에 실패하였습니다.';
+		msg += '에러내용 : ' + rsp.error_msg;
+	}
+		alert(msg);
+	});
+}
+
+</script>
+
+</body>
+</html>

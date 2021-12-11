@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/mypage/cart.css" rel="stylesheet"></link>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <!-- csrf 토큰 -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>장바구니</title>
+</head>
+<body>
+	<div th:replace="common/header.html"></div>
+	<div th:replace="mypage/sideMenu.html"></div>
+    <div class="outer">
+        <div class="title">
+            <span>장바구니(<span th:text="${#lists.size(cart_list)}"></span>)</span>
+        </div>
+        
+		<th:block th:if="${#lists.size(cart_list) > 0}">
+        <form id="cartForm" th:action="@{/product/order}" method="post">
+            <div class="cart">
+            	<span class="info">품절된 상품은 표시되지 않습니다.</span>
+                <div class="cart_list">
+                    <ul class="cart_header">
+                        <li class="allCheck"><input type="checkbox" id="allCheck" onclick="selectAll(this)"></li>
+                        <li class="pname">상품명</li>
+                        <li class="price">판매가/할인가</li>
+                        <li class="amount">수량</li>
+                        <li class="option">옵션</li>
+                        <li class="cart_price">상품금액</li>
+                        <li class="delete">주문/삭제</li>
+                    </ul>
+					
+					<div id="checkConfirm" name="checkConfirm" th:each="c,index: ${cart_list}">
+						<th:block th:if="${index.index} == 0 or ${index.index} > 0 and ${c.seller_code} != ${cart_list.get(index.index - 1).seller_code}">
+						<div class="seller_name" th:text="${c.seller_name}"></div>
+						</th:block> 
+								<input type="hidden" id="userNo" name="userNo" th:value="${c.user_no}">
+		                    	<input type="hidden" id="sellerCode" name="sellerCode" th:value="${c.seller_code}">
+		                    	<input type="hidden" id= "pNo" name="pNo" th:value="${c.p_no}">
+		                    	<input type="hidden" id="pOptionNo" name="pOptionNo" th:value="${c.p_option_no}">
+		                    <ul class="cart_ul">
+		                        <li class="check"><input type="checkbox" id="pcheck" name="pcheck" th:value="${c.cart_no}"></li>
+		                    
+		                        <li class="pname">
+		                        <a th:href="@{'/product/view/' + ${c.p_no}}">
+		                            <div class="img_area">
+		                                <img th:src="@{${c.route} + ${c.imgrName}}">
+		                            </div>
+		                            <div class="p_info">
+		                                <div id="pname" th:text="${c.p_name}"></div>
+		                            </div>
+		                        </a>
+		                        </li>
+		                        <li class="price">
+		                        	<span id="origin_price" th:text="|${c.p_price}원|"></span><br>
+                    				<span id="discount_price" th:text="|${c.p_price * (100 - c.p_discount) / 100}원|"></span><br>
+		                        </li>
+		                        <li class="amount">										
+		                            <button type="button" id="minus" th:attr="onclick=|minus_amount('${c.cart_no}')|">-</button>
+		                            <input type="number" class="numBox" id="cartAmount" name="cartAmount" min="1" th:value="${c.cart_amount}" readonly>
+		                            <button type="button" id="plus" th:attr="onclick=|plus_amount('${c.cart_no}', '${c.p_option_no}')|">+</button>
+		                        </li>
+		                        <li class="option">
+		                        	<div class="color" th:text="${c.p_color}"></div>
+		                        	<div class="size" th:text="${c.p_size}"></div>
+		                        </li>
+		                        <li class="cart_price">
+		                        	<div class="subtotal" th:text="|${c.subtotal}원|" th:value="${c.subtotal}"></div>
+		                        	<div class="delivery_price" th:if="${c.subtotal >= 80000}"><input type="hidden" name= "delivery_price" value="0">배송비 0원</div>
+		                        	<div class="delivery_price" th:if="${c.subtotal < 80000}"><input type="hidden" name= "delivery_price" value="2500">배송비 2500원</div>
+		                        </li>
+		                        <li class="delete">
+		                        	<button type="button" id="orderOne">주문</button>
+		                            <button type="button" id="delete" th:attr="onclick=|deleteCart('${c.cart_no}', '${c.p_name}')|">삭제</button>
+		                        </li>
+		                    </ul>
+		            </div>
+		                  
+	            </div>
+                  
+           </div>
+
+           <div class="select">
+                <button type="button" id="checkAllBtn">전체선택</button>
+                <button type="button" id="selectDelete">선택삭제</button>
+            </div>
+    
+            <div class="result">
+                <span>총 주문금액 : </span>
+                <span>상품</span>
+                <span id="total_price">0원</span>
+                <span> + 배송비</span>
+                <span id="delivery_price">0원</span>
+                <span>=</span>
+                <span id="sum_price">0원</span>
+            </div>
+                
+            <div class="btn_area">
+                <button type="submit" id="order_btn">주문하기</button>
+            </div>
+        </form>
+            </th:block>
+            <th:block th:if="${#lists.size(cart_list) == 0}">
+                <div class="null_cart">
+                	<img id="null" src="/images/nocart.png">
+                	<div>장바구니가 비어있습니다</div>
+                </div>
+            </th:block>
+      </div> 
+      
+      <form name="newForm" th:action="@{/product/order}" method="post"></form>
+       
+    <div th:replace="common/footer.html"></div>
+    
+    <!-- 체크박스 전체 선택 -->
+    <script>
+    	function selectAll(selectAll){
+    		const checkboxes = document.getElementsByName('pcheck');
+    		
+    		checkboxes.forEach((checkbox) => {
+    			checkbox.checked = selectAll.checked;
+    		})
+    		
+    		var totalPrice = 0;
+    		var delivery_price = 0;
+    		var sum_price = 0;
+    		var seller_arr = [];
+    		
+    		$('input:checkbox[name="pcheck"]').each(function(){
+        		if($(this).prop("checked")){
+        			
+        			var onePrice = $(this).parent().parent().children('li:eq(5)').children('div:eq(0)').attr("value");
+        			var priceValue = Number(onePrice);
+        			// seller_code
+        			var sellerCode =$(this).parent().parent().parent().children('input:eq(1)').val();
+        			
+        			if(seller_arr.find(x => x.sellerCode == sellerCode)){
+        				// 배송비 추가 X
+        				seller_arr.find(x => x.sellerCode == sellerCode).price = Number(seller_arr.find(x => x.sellerCode == sellerCode).price) + priceValue;
+        				
+        			} else {
+       					// 배송비 추가 
+        				seller_arr.push({sellerCode:sellerCode, price:onePrice});
+        			}
+        			
+        			totalPrice = totalPrice + priceValue;
+        		} 
+    		});
+    		
+    		// 선택한 상품의 상점 갯수
+    		var seller_lengh = seller_arr.length;
+    		// 상점별로 선택한 상품의 금액합계가 80000원이 넘는 상점의 갯수
+    		var nodelivery_length = seller_arr.filter(x => x.price >= 80000).length;
+    		
+    		// 총 결제해야하는 배송비
+    		var delivery_price = (seller_lengh - nodelivery_length) * 2500;
+    		
+    		sum_price = totalPrice + delivery_price;
+    		
+    		// 천단위로 콤마 표시
+    		const totalPrice2 = totalPrice.toLocaleString('ko-KR'); 
+    		const delivery_price2 = delivery_price.toLocaleString('ko-KR'); 
+    		const sum_price2 = sum_price.toLocaleString('ko-KR'); 
+    		
+    		$('#total_price').html(totalPrice2 + "원");
+    		$('#delivery_price').html(delivery_price2 + "원");
+    		$('#sum_price').html(sum_price2 + "원");
+    	}
+    </script>
+    
+    <!-- 체크박스 전체 체크 안 되어있으면 전체 체크박스 해제 -->
+    <script>
+    
+    </script>
+    
+    <!-- 전체 선택 버튼 클릭 -->
+    <script>
+    	$('#checkAllBtn').on("click", function(){
+    		
+    		if($('[name=pcheck]').is(":checked") == false){
+    			$('[name=pcheck]').prop('checked', true);
+        		var totalPrice = 0;
+        		var delivery_price = 0;
+        		var sum_price = 0;
+        		var seller_arr = [];
+        		
+        		$('input:checkbox[name="pcheck"]').each(function(){
+            		if($(this).prop("checked")){
+            			
+            			var onePrice = $(this).parent().parent().children('li:eq(5)').children('div:eq(0)').attr("value");
+            			var priceValue = Number(onePrice);
+            			// seller_code
+            			var sellerCode =$(this).parent().parent().parent().children('input:eq(1)').val();
+            			
+            			if(seller_arr.find(x => x.sellerCode == sellerCode)){
+            				// 배송비 추가 X
+            				seller_arr.find(x => x.sellerCode == sellerCode).price = Number(seller_arr.find(x => x.sellerCode == sellerCode).price) + priceValue;
+            				
+            			} else {
+           					// 배송비 추가 
+            				seller_arr.push({sellerCode:sellerCode, price:onePrice});
+            			}
+            			
+            			totalPrice = totalPrice + priceValue;
+            		} 
+        		});
+        		
+        		// 선택한 상품의 상점 갯수
+        		var seller_lengh = seller_arr.length;
+        		// 상점별로 선택한 상품의 금액합계가 80000원이 넘는 상점의 갯수
+        		var nodelivery_length = seller_arr.filter(x => x.price >= 80000).length;
+        		
+        		// 총 결제해야하는 배송비
+        		var delivery_price = (seller_lengh - nodelivery_length) * 2500;
+        		
+        		sum_price = totalPrice + delivery_price;
+        		
+        		// 천단위로 콤마 표시
+        		const totalPrice2 = totalPrice.toLocaleString('ko-KR'); 
+        		const delivery_price2 = delivery_price.toLocaleString('ko-KR'); 
+        		const sum_price2 = sum_price.toLocaleString('ko-KR'); 
+        		
+        		$('#total_price').html(totalPrice2 + "원");
+        		$('#delivery_price').html(delivery_price2 + "원");
+        		$('#sum_price').html(sum_price2 + "원");
+        		
+    		} else {
+    			$('[name=pcheck]').prop('checked', false);
+    			$('#total_price').html('0원');
+    			$('#delivery_price').html('0원');
+    			$('#sum_price').html('0원');
+    		}
+    	
+    	});
+    </script>
+    
+    <!-- 개별 주문 -->
+    <script>
+    	$(function(){
+    		$(document).on("click", "#orderOne", function(){
+    			var newForm = document.querySelector('[name=newForm]');
+        		
+        		var userNo = $(this).parent().parent().parent().children('input:eq(0)').val();
+        		var sellerCode = $(this).parent().parent().parent().children('input:eq(1)').val();
+        		var pNo = $(this).parent().parent().parent().children('input:eq(2)').val();
+        		var pOptionNo = $(this).parent().parent().parent().children('input:eq(3)').val();
+        		var cartAmount = $(this).parent().parent().children('li:eq(3)').children('input').val();
+        		        		
+        		var input1 = document.createElement('input'); 
+        		var input2 = document.createElement('input');
+        		var input3 = document.createElement('input'); 
+        		var input4 = document.createElement('input');
+        		var input5 = document.createElement('input'); 
+
+        		input1.setAttribute("type", "text"); 
+        		input1.setAttribute("name", "userNo"); 
+        		input1.setAttribute("value", userNo); 
+        		
+        		input2.setAttribute("type", "text"); 
+        		input2.setAttribute("name", "sellerCode"); 
+        		input2.setAttribute("value", sellerCode);
+        		
+        		input3.setAttribute("type", "text"); 
+        		input3.setAttribute("name", "pNo"); 
+        		input3.setAttribute("value", pNo);
+        		
+        		input4.setAttribute("type", "text"); 
+        		input4.setAttribute("name", "pOptionNo"); 
+        		input4.setAttribute("value", pOptionNo);
+        		
+        		input5.setAttribute("type", "text"); 
+        		input5.setAttribute("name", "cartAmount"); 
+        		input5.setAttribute("value", cartAmount);
+        		
+        		newForm.appendChild(input1);
+        		newForm.appendChild(input2);
+        		newForm.appendChild(input3);
+        		newForm.appendChild(input4);
+        		newForm.appendChild(input5);
+
+        		document.body.appendChild(newForm);
+        		
+        		newForm.submit();
+    		});
+    	});
+    </script>
+            
+    <!-- 개별 삭제 -->
+    <script>
+    	function deleteCart(cart_no, p_name){
+    		if(!confirm(p_name + "을(를) 장바구니에서 삭제하시겠습니까?")) return;
+    		
+    		var token = $("meta[name='_csrf']").attr("content");
+    		var header = $("meta[name='_csrf_header']").attr("content"); 
+			
+    		$.ajax({
+    			url : "/mypage/deleteCart",
+    			type : "post",
+    			data : {cart_no:cart_no},
+    			/* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+				beforeSend : function(xhr)		
+				{
+					xhr.setRequestHeader(header, token);    					
+				},
+				success : function(result){
+					if(result > 0) {
+						alert("장바구니에서 삭제되었습니다.");
+						location.reload();
+					} else
+						alert("장바구니 삭제에 실패했습니다.");			
+				},
+				error : function(e){
+					console.log(e);
+				}
+    		});
+    	}
+    </script>
+    
+    <!-- 선택 삭제 -->
+    <script>
+    	$('#selectDelete').on("click", function(){
+    		var checkBoxArr = [];
+    		$("input:checkbox[name='pcheck']:checked").each(function(){
+    			checkBoxArr.push($(this).val());
+    		})
+    		
+    		var token = $("meta[name='_csrf']").attr("content");
+    		var header = $("meta[name='_csrf_header']").attr("content"); 
+    		
+    		$.ajax({
+    			url : "/mypage/selectDelete",
+    			type : 'post',
+    			data : {'deleteList' : checkBoxArr},
+    			/* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+				beforeSend : function(xhr)		
+				{
+					xhr.setRequestHeader(header, token);    					
+				},
+				success : function(result){
+					if(result > 0) {
+						alert("장바구니에서 삭제되었습니다.");
+						location.reload();
+					} else
+						alert("장바구니 삭제에 실패했습니다.");			
+				},
+				error : function(e){
+					console.log(e);
+				}
+    		});
+    	});
+    </script>
+    
+    <!-- 수량 조절 -->
+    <script>
+    	function minus_amount(cart_no){
+    		var token = $("meta[name='_csrf']").attr("content");
+    		var header = $("meta[name='_csrf_header']").attr("content"); 
+    		
+    		$.ajax({
+    			url : "/mypage/minus_amount",
+    			type : "post",
+    			data : {cart_no:cart_no},
+    			/* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+				beforeSend : function(xhr)		
+				{
+					xhr.setRequestHeader(header, token);    					
+				},
+				success : function(result){
+					if(result > 0) {
+						alert("수량조절 성공!");
+						location.reload();
+					} else
+						alert("수량이 0이 될 수 없습니다.");			
+				},
+				error : function(e){
+					console.log(e);
+				}
+    		});
+    	}
+    </script>
+    
+    <script>
+    	function plus_amount(cart_no, p_option_no){
+    		var token = $("meta[name='_csrf']").attr("content");
+    		var header = $("meta[name='_csrf_header']").attr("content"); 
+    		var amount = $("#cartAmount").val();
+    		
+    		$.ajax({
+    			url : "/mypage/plus_amount",
+    			type : "post",
+    			data : {cart_no:cart_no, p_option_no:p_option_no},
+    			/* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+				beforeSend : function(xhr)		
+				{
+					xhr.setRequestHeader(header, token);    					
+				},
+				success : function(result){
+					if(result > 0) {
+						alert("수량조절 성공!");
+						location.reload();
+						
+					} else
+						alert("재고가 부족합니다.");			
+				},
+				error : function(e){
+					console.log(e);
+				}
+    		});
+    	}
+    </script>
+    
+    <!-- 총 주문금액 -->
+    <script>        
+    	$('input:checkbox[name="pcheck"]').change(function(){
+    		var totalPrice = 0;
+    		var delivery_price = 0;
+    		var sum_price = 0;
+    		var seller_arr = [];
+    		
+    		$('input:checkbox[name="pcheck"]').each(function(){
+        		if($(this).prop("checked")){
+        			
+        			var onePrice = $(this).parent().parent().children('li:eq(5)').children('div:eq(0)').attr("value");
+        			var priceValue = Number(onePrice);
+        			// seller_code
+        			var sellerCode =$(this).parent().parent().parent().children('input:eq(1)').val();
+        			
+        			if(seller_arr.find(x => x.sellerCode == sellerCode)){
+        				// 배송비 추가 X
+        				seller_arr.find(x => x.sellerCode == sellerCode).price = Number(seller_arr.find(x => x.sellerCode == sellerCode).price) + priceValue;
+        				
+        			} else {
+       					// 배송비 추가 
+        				seller_arr.push({sellerCode:sellerCode, price:onePrice});
+        			}
+        			
+        			totalPrice = totalPrice + priceValue;
+        		} 
+    		});
+    		
+    		// 선택한 상품의 상점 갯수
+    		var seller_lengh = seller_arr.length;
+    		// 상점별로 선택한 상품의 금액합계가 80000원이 넘는 상점의 갯수
+    		var nodelivery_length = seller_arr.filter(x => x.price >= 80000).length;
+    		
+    		// 총 결제해야하는 배송비
+    		var delivery_price = (seller_lengh - nodelivery_length) * 2500;
+    		
+    		sum_price = totalPrice + delivery_price;
+    		
+    		// 천단위로 콤마 표시
+    		const totalPrice2 = totalPrice.toLocaleString('ko-KR'); 
+    		const delivery_price2 = delivery_price.toLocaleString('ko-KR'); 
+    		const sum_price2 = sum_price.toLocaleString('ko-KR'); 
+    		
+    		$('#total_price').html(totalPrice2 + "원");
+    		$('#delivery_price').html(delivery_price2 + "원");
+    		$('#sum_price').html(sum_price2 + "원");
+    	});
+    </script>
+    
+    <!-- 체크리스트로 주문 -->
+    <script>
+    	$("#order_btn").on("click", function(){
+    		$(".cart_ul").each(function() { 
+    			if($(this).children('li:eq(0)').children().is(":checked") == false) {
+    				$(this).parent().html('');
+    			}
+    		});
+    	});
+    	
+    </script>
+    
+</body>
+</html>
+
+
+
+
+
+

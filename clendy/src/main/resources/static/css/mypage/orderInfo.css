@@ -1,0 +1,102 @@
+div { 
+    borde: 1px solid black;
+}
+
+
+.outer {
+    width: 650px;
+    margin: auto;
+    margin-top: 20px;
+}
+
+.title {
+	width: 500px;
+	margin: auto;
+	text-align: center;
+    font-size: x-large;
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 2px solid black;
+    margin-bottom: 20px;
+}
+
+#subtitle {
+	font-weight :bold;
+	font-size: large;
+}
+
+.delivery_info {
+	width: 500px;
+	margin: auto;
+	border: 1px solid lightgray;
+	border-bottom: 2px solid lightgray;
+	padding: 10px;
+}
+
+.del {
+	color:gray;
+	font-weight: bold;
+	margin-right: 45px;
+}
+
+#memo {
+	margin-right: 25px;
+}
+
+.info {
+	color:gray;
+	font-weight: bold;
+	margin-right: 25px;
+}
+
+.pay {
+	width: 500px;
+	margin: auto;
+	border: 1px solid lightgray;
+	border-top: none;
+	border-bottom: 2px solid lightgray;
+	padding: 10px;
+}
+
+.payment {
+	width: 500px;
+	margin: auto;
+	border: 1px solid lightgray;
+	border-top: none;
+	border-bottom: 2px solid lightgray;
+	padding: 10px;
+}
+
+.payinfo {
+	color:gray;
+	font-weight: bold;
+	margin-right: 30px;
+}
+
+#pinfo {
+	margin-right: 10px;
+}
+
+.point {
+	width: 500px;
+	margin: auto;
+	border: 1px solid lightgray;
+	border-top: none;
+	padding: 10px;
+}
+
+.btn_area {
+    margin-top: 30px;
+    text-align: center;
+}
+
+button {
+    background-color: #060032;
+    color: white;
+    border: none;
+    font-size: large;
+    font-weight: bold;
+    width: 120px;
+    height: 40px;
+    cursor: pointer;
+}

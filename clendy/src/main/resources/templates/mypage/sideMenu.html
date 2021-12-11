@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/mypage/sideMenu.css" rel="stylesheet"></link>
+    <title>사이드메뉴</title>
+</head>
+<body>
+    <div class="sideMenu">
+        <ul class="menuList">
+            <li><a class="side" href="/mypage/modify">회원정보</a></li>
+            <li><a class="side" href="/mypage/orderList">주문내역</a></li>
+            <li><a class="side" href="/mypage/cart">장바구니</a></li>
+            <li><a class="side" href="/mypage/wishlistOuter">위시리스트</a></li>
+            <li><a class="side" href="/mypage/point">포인트</a></li>
+            <li><a class="side" href="/mypage/myBoard_pqna">내가 쓴 글</a></li>
+            <li><a class="side" onclick="confirmDelete()">회원탈퇴</a></li>
+        </ul>
+    </div>
+    
+    <!-- 회원탈퇴 : 탈퇴 의사 확인 후 탈퇴 -->	
+    <!-- **비밀번호 확인로직** -->
+    <script>
+    	function confirmDelete(){
+    		if(confirm("정말 탈퇴하시겠습니까?")){
+    			var popupWidth = 800;
+    			var popupHeight = 450;
+
+    			var popupX = (window.screen.width / 2) - (popupWidth / 2);
+    			var popupY= (window.screen.height / 2) - (popupHeight / 2);
+    			
+    			window.open("/mypage/confirmPwd", "비밀번호 확인", 'status=no, height=' + popupHeight  + ', width=' + popupWidth  + ', left='+ popupX + ', top='+ popupY);	
+    		}
+    	}
+    </script>
+</body>
+</html>

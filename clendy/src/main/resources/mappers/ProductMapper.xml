@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.clendy.product.model.dao.ProductMapper">
+	
+	<resultMap id="productListResultMap" type="com.kh.clendy.product.model.vo.Product">
+		<id property="pNo" column="P_NO"/>
+		<result property="pName" column="P_NAME"/>	
+		<result property="pPrice" column="P_PRICE"/>	
+		<result property="pDiscount" column="P_DISCOUNT"/>	
+		<result property="CategoryCode" column="CATEGORY_CODE"/>	
+		<result property="sellerCode" column="SELLER_CODE"/>	
+		<result property="pStatus" column="P_STATUS"/>
+		<result property="selCount" column="SEL_COUNT"/>	
+		<result property="reviewCount" column="REVIEW_COUNT"/>
+		<association property="imageList" resultMap="productImageResultMap"/>
+	</resultMap>
+	
+	<!-- 상품 상세 반환 -->
+	<resultMap id="productViewInfoResultMap" type="com.kh.clendy.product.model.vo.Product">
+		
+		<id property="pNo" column="P_NO"/>
+		<result property="pName" column="P_NAME"/>	
+		<result property="pPrice" column="P_PRICE"/>	
+		<result property="pDiscount" column="P_DISCOUNT"/>	
+		<result property="CategoryCode" column="CATEGORY_CODE"/>	
+		<result property="sellerCode" column="SELLER_CODE"/>	
+		<result property="pStatus" column="P_STATUS"/>
+		<result property="wishLike" column="WISH_LIKE"/>
+		<collection property="imageList" resultMap="productImageResultMap"/>
+	</resultMap>
+	
+	<!-- ProductImage 맵 -->
+	<resultMap id="productImageResultMap" type="com.kh.clendy.product.model.vo.ProductImage">
+		<result property="imgNo" column="IMG_NO"/>
+		<result property="route" column="ROUTE"/>
+		<result property="imgName" column="IMG_NAME"/>
+		<result property="imgrName" column="IMG_R_NAME"/>
+		<result property="imgLevel" column="IMG_LEVEL"/>
+		<result property="imgStatus" column="IMG_STATUS"/>
+	</resultMap>
+	
+	<!-- 상품 옵션 -->
+	<resultMap id="productOptionResultMap" type="com.kh.clendy.product.model.vo.ProductOption">
+		<id property="pOptionNo" column="P_OPTION_NO"/>
+		<result property="pNo" column="P_NO"/>
+		<result property="pColor" column="P_COLOR"/>
+		<result property="pSize" column="P_SIZE"/>
+		<result property="pStock" column="P_STOCK"/>
+		<result property="pPrice" column="P_PRICE"/>
+		<result property="pDiscount" column="P_DISCOUNT"/>
+	</resultMap>
+	
+	<!-- 상품 목록 갯수 -->
+	<select id="productGetListCount" parameterType="com.kh.clendy.product.model.vo.ProductFilter" resultType="int">
+        SELECT
+            COUNT(*)
+          FROM PRODUCT PD
+          LEFT JOIN PRODUCT_IMAGE PI ON (PD.P_NO = PI.P_NO)
+          LEFT JOIN IMAGE IMG ON(PI.IMG_NO = IMG.IMG_NO)
+          LEFT JOIN PRODUCT_CATEGORY ON(PD.CATEGORY_CODE = PRODUCT_CATEGORY.CATEGORY_CODE)
+          WHERE PD.P_STATUS = 'Y'
+            AND IMG.IMG_LEVEL = 0
+            <choose>
+            	<when test="type.equals('public')">
+            		AND PRODUCT_CATEGORY.REF_CATEGORY_CODE = 1
+            	</when>
+            	<when test="type.equals('man')">
+            		AND PRODUCT_CATEGORY.REF_CATEGORY_CODE = 2
+            	</when>
+            	<when test="type.equals('woman')">
+            		AND PRODUCT_CATEGORY.REF_CATEGORY_CODE = 3
+            	</when>
+            </choose>
+            
+            <choose>
+            	<when test="category.equals('outer')">
+            		AND PRODUCT_CATEGORY.CATEGORY_NAME = '아우터'
+            	</when>
+            	<when test="category.equals('top')">
+            		AND PRODUCT_CATEGORY.CATEGORY_NAME = '상의'
+            	</when>
+            	<when test="category.equals('under')">
+            		AND PRODUCT_CATEGORY.CATEGORY_NAME = '하의'
+            	</when>
+            	<when test="category.equals('acc')">
+            		AND PRODUCT_CATEGORY.CATEGORY_NAME = 'ACC'
+            	</when>
+            	<otherwise>
+            		AND PRODUCT_CATEGORY.CATEGORY_NAME IS NOT NULL
+            	</otherwise>
+            </choose>
+	</select>
+	
+	<!-- 상품 목록 -->
+	<select id="productSelectList" resultMap="productListResultMap" parameterType="map">
+	SELECT
+            *
+            FROM(
+            SELECT
+       ROWNUM ROWN
+     , TBL.*
+     FROM(
+        SELECT
+               PD.P_NO
+             , PD.P_NAME
+             , PD.P_PRICE
+             , PD.P_PRICE - (PD.P_PRICE * (PD.P_DISCOUNT / 100.0)) AS SALE_PRICE
+             , PD.P_DISCOUNT
+             , PD.CATEGORY_CODE
+             , PD.SELLER_CODE
+             , PD.P_STATUS
+             , PI.IMG_NO
+             , IMG.ROUTE
+             , IMG.IMG_NAME
+             , IMG.IMG_R_NAME
+             , IMG.IMG_LEVEL
+             , IMG.IMG_STATUS
+             , (SELECT
+                       COUNT(*) AS COUNT
+                  FROM PRODUCT_ORDER
+                  JOIN ORDER_OPTION USING(ORDER_CODE)
+                  JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+                  JOIN PRODUCT USING(P_NO)
+                 WHERE P_NO = PD.P_NO
+            ) AS SEL_COUNT
+            ,NVL(( SELECT
+                      COUNT(*)
+                FROM REVIEW
+                JOIN ORDER_OPTION USING(ORDER_OPTION_CODE)
+                 JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+                  JOIN PRODUCT USING(P_NO)
+                   WHERE P_NO = PD.P_NO
+            ), 0) AS REVIEW_COUNT
+            , (SELECT
+                       COUNT(*) AS COUNT
+                  FROM PRODUCT_ORDER
+                  JOIN ORDER_OPTION USING(ORDER_CODE)
+                  JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+                  JOIN PRODUCT USING(P_NO)
+                 WHERE P_NO = PD.P_NO
+            ) +
+            ( SELECT
+                      COUNT(P_NO)
+                FROM REVIEW
+                JOIN ORDER_OPTION USING(ORDER_OPTION_CODE)
+                 JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+                  JOIN PRODUCT USING(P_NO)
+                   WHERE P_NO = PD.P_NO
+            ) +
+            NVL(( SELECT
+                      COUNT(SCORE)
+                FROM REVIEW
+                JOIN ORDER_OPTION USING(ORDER_OPTION_CODE)
+                 JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+                  JOIN PRODUCT USING(P_NO)
+                   WHERE P_NO = PD.P_NO
+            ), 0) AS ALIGN_HOT
+          FROM PRODUCT PD
+          LEFT JOIN PRODUCT_IMAGE PI ON (PD.P_NO = PI.P_NO)
+          LEFT JOIN IMAGE IMG ON(PI.IMG_NO = IMG.IMG_NO)
+          LEFT JOIN PRODUCT_CATEGORY ON(PD.CATEGORY_CODE = PRODUCT_CATEGORY.CATEGORY_CODE)
+          WHERE PD.P_STATUS = 'Y'
+            AND IMG.IMG_LEVEL = 0
+            <choose>
+            	<when test="filter.type.equals('public')">
+            		AND PRODUCT_CATEGORY.REF_CATEGORY_CODE = 1
+            	</when>
+            	<when test="filter.type.equals('man')">
+            		AND PRODUCT_CATEGORY.REF_CATEGORY_CODE = 2
+            	</when>
+            	<when test="filter.type.equals('woman')">
+            		AND PRODUCT_CATEGORY.REF_CATEGORY_CODE = 3
+            	</when>
+            </choose>
+            
+            <choose>
+            	<when test="filter.category.equals('outer')">
+            		AND PRODUCT_CATEGORY.CATEGORY_NAME = '아우터'
+            	</when>
+            	<when test="filter.category.equals('top')">
+            		AND PRODUCT_CATEGORY.CATEGORY_NAME = '상의'
+            	</when>
+            	<when test="filter.category.equals('under')">
+            		AND PRODUCT_CATEGORY.CATEGORY_NAME = '하의'
+            	</when>
+            	<when test="filter.category.equals('acc')">
+            		AND PRODUCT_CATEGORY.CATEGORY_NAME = 'ACC'
+            	</when>
+            	<otherwise>
+            		AND PRODUCT_CATEGORY.CATEGORY_NAME IS NOT NULL
+            	</otherwise>
+            </choose>
+           <choose>
+            	<when test="filter.align.equals('hot')">
+            		ORDER BY ALIGN_HOT DESC, PD.P_NO DESC 
+            	</when>
+            	<when test="filter.align.equals('latest')">
+            		ORDER BY PD.P_NO DESC 
+            	</when>
+            	<when test="filter.align.equals('lowPrice')">
+            		ORDER BY SALE_PRICE, P_NO DESC
+            	</when>
+            	<when test="filter.align.equals('highPrice')">
+            		ORDER BY SALE_PRICE DESC, P_NO DESC
+            	</when>
+            </choose>
+     ) TBL)
+     WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="productViewInfo" parameterType="java.util.Map" resultMap="productViewInfoResultMap">
+		SELECT
+		       SEL.SELLER_CODE
+		     , PD.P_NO
+		     , PD.P_NAME
+		     , PD.P_PRICE
+		     , PD.P_DISCOUNT
+		     , PD.P_ABLE_COUPON
+		     , PD.P_DETAIL_IMAGE
+		     , PD.CATEGORY_CODE
+		     , PD.SELLER_CODE
+		     , PD.P_STATUS
+		     , (SELECT
+		               COUNT(*)
+		               FROM WISHLIST SWL
+		               WHERE SWL.USER_NO = #{userNo}
+		                 AND PD.P_NO = SWL.P_NO ) AS WISH_LIKE
+		     , IMG.IMG_NO
+		     , IMG.ROUTE
+		     , IMG.IMG_NAME
+		     , IMG.IMG_R_NAME
+		     , IMG.IMG_LEVEL
+		     , IMG.IMG_STATUS
+		     FROM PRODUCT PD
+		     LEFT JOIN WISHLIST WL ON(PD.P_NO = WL.P_NO)
+		     LEFT JOIN MEMBER M ON(WL.USER_NO = M.USER_NO)
+		     LEFT JOIN PRODUCT_IMAGE PIMG ON(PD.P_NO = PIMG.P_NO)
+		     LEFT JOIN IMAGE IMG ON(PIMG.IMG_NO = IMG.IMG_NO)
+		     JOIN SELLER SEL ON(PD.SELLER_CODE = SEL.SELLER_CODE)
+		    WHERE PD.P_STATUS = 'Y'
+		      AND IMG.IMG_LEVEL = 1
+		      AND PD.P_NO = #{pNo}
+	</select>
+	
+	<select id="productViewIsWish" resultType="_int" parameterType="java.util.Map">
+		SELECT
+	       	   COUNT(*) AS COUNT
+	      FROM WISHLIST
+	     WHERE USER_NO = #{userNo}
+	       AND P_NO = #{pNo}
+	</select>
+	
+	<insert id="productViewInsertWish" parameterType="java.util.Map">
+		INSERT
+		  INTO WISHLIST
+		  (
+		  	   USER_NO
+		  	 , P_NO
+		  )
+		VALUES
+		 (
+		 	  #{userNo}
+		 	, #{pNo}
+		 )
+	</insert>
+	
+	<delete id="productViewDeleteWish" parameterType="java.util.Map">
+		DELETE
+		  FROM WISHLIST
+		 WHERE USER_NO = #{userNo}
+		   AND P_NO = #{pNo}
+	</delete>
+	
+	<select id="productTabCount" parameterType="_int" resultType="map">
+        SELECT
+       (SELECT
+               COUNT(*)
+          FROM PRODUCT_INQUIRY_Q
+          WHERE PRODUCT_INQUIRY_Q.P_NO = #{ pNo }
+            AND P_I_Q_DEL_STATUS = 'N') AS INQUIRY_COUNT
+       , (SELECT
+                 COUNT(*)
+          FROM REVIEW
+          -- JOIN PRODUCT_ORDER ON(REVIEW.ORDER_CODE = PRODUCT_ORDER.ORDER_CODE)
+          JOIN ORDER_OPTION ON(REVIEW.ORDER_OPTION_CODE = ORDER_OPTION.ORDER_OPTION_CODE)
+          JOIN PRODUCT_ORDER ON(ORDER_OPTION.ORDER_CODE = PRODUCT_ORDER.ORDER_CODE)
+          JOIN PRODUCT_OPTION ON(ORDER_OPTION.P_OPTION_NO = PRODUCT_OPTION.P_OPTION_NO)
+          JOIN PRODUCT ON(PRODUCT_OPTION.P_NO = PRODUCT.P_NO) 
+          WHERE PRODUCT.P_NO = #{ pNo }
+       ) AS REVIEW_COUNT
+          FROM DUAL
+	</select>
+	
+	<select id="productOptionSelect" parameterType="_int" resultMap="productOptionResultMap">
+		SELECT
+		       P_OPTION_NO
+		     , P_NO
+		     , P_COLOR
+		     , P_SIZE
+		     , P_STOCK
+             , PRODUCT.P_PRICE
+             , PRODUCT.P_DISCOUNT
+		  FROM PRODUCT_OPTION
+          JOIN PRODUCT USING(P_NO)
+		 WHERE P_NO = #{ pNo }
+		 ORDER BY P_COLOR DESC, P_SIZE DESC
+	</select>
+	
+	<select id="cartGetCount" parameterType="com.kh.clendy.product.model.vo.ProductCart" resultType="_int">
+		SELECT
+		       COUNT(*) AS COUNT
+		  FROM CART
+		  JOIN MEMBER USING(USER_NO)
+		 WHERE USER_NO = #{ userNo }
+		   AND P_OPTION_NO = #{ pOptionNo }
+	</select>
+	
+	<insert id="productCartInsert" parameterType="com.kh.clendy.product.model.vo.ProductCart">
+		INSERT
+		  INTO CART
+		  (
+		       CART_NO
+		     , CART_AMOUNT
+		     , P_OPTION_NO
+		     , USER_NO
+		  )
+		VALUES
+		  (
+		       SEQ_CART_NO.NEXTVAL
+		     , #{ cartAmount }
+		     , #{ pOptionNo }
+		     , #{ userNo }
+		  )
+	</insert>
+	
+	<update id="productCartUpdate" parameterType="com.kh.clendy.product.model.vo.ProductCart">
+		UPDATE CART
+		   SET CART_AMOUNT = CART_AMOUNT + #{ cartAmount }
+		 WHERE USER_NO = #{ userNo }
+		   AND P_OPTION_NO = #{ pOptionNo }
+	</update>
+	
+	<select id="productCategoryCount" parameterType="com.kh.clendy.product.model.vo.ProductFilter" resultType="map">
+		SELECT
+		       (SELECT
+		               COUNT(*)
+		          FROM PRODUCT
+		          JOIN PRODUCT_CATEGORY USING(CATEGORY_CODE)
+		          WHERE REF_CATEGORY_CODE =	
+		          <choose>
+		          	<when test="type.equals('public')">
+		          		1
+		          	</when>
+		          	<when test="type.equals('man')">
+		          		2
+		          	</when>
+		          	<when test="type.equals('woman')">
+		          		3
+		          	</when>
+		          </choose>
+		          
+		          ) AS CATEGORY_ALL
+		        ,
+		        (SELECT
+		               COUNT(*)
+		          FROM PRODUCT
+		          JOIN PRODUCT_CATEGORY USING(CATEGORY_CODE)
+		          WHERE REF_CATEGORY_CODE = 
+		         <choose>
+		          	<when test="type.equals('public')">
+		          		1
+		          	</when>
+		          	<when test="type.equals('man')">
+		          		2
+		          	</when>
+		          	<when test="type.equals('woman')">
+		          		3
+		          	</when>
+		          </choose>
+		            AND CATEGORY_NAME = '아우터') AS CATEGORY_OUTER
+		        ,
+		        (SELECT
+		               COUNT(*)
+		          FROM PRODUCT
+		          JOIN PRODUCT_CATEGORY USING(CATEGORY_CODE)
+		          WHERE REF_CATEGORY_CODE = 
+		          <choose>
+		          	<when test="type.equals('public')">
+		          		1
+		          	</when>
+		          	<when test="type.equals('man')">
+		          		2
+		          	</when>
+		          	<when test="type.equals('woman')">
+		          		3
+		          	</when>
+		          </choose>
+		            AND CATEGORY_NAME = '상의') AS CATEGORY_TOP
+		        ,
+		        (SELECT
+		               COUNT(*)
+		          FROM PRODUCT
+		          JOIN PRODUCT_CATEGORY USING(CATEGORY_CODE)
+		          WHERE REF_CATEGORY_CODE = 
+		         <choose>
+		          	<when test="type.equals('public')">
+		          		1
+		          	</when>
+		          	<when test="type.equals('man')">
+		          		2
+		          	</when>
+		          	<when test="type.equals('woman')">
+		          		3
+		          	</when>
+		          </choose>
+		            AND CATEGORY_NAME = '하의') AS CATEGORY_UNDER
+		        ,
+		        (SELECT
+		               COUNT(*)
+		          FROM PRODUCT
+		          JOIN PRODUCT_CATEGORY USING(CATEGORY_CODE)
+		          WHERE REF_CATEGORY_CODE = 
+		          <choose>
+		          	<when test="type.equals('public')">
+		          		1
+		          	</when>
+		          	<when test="type.equals('man')">
+		          		2
+		          	</when>
+		          	<when test="type.equals('woman')">
+		          		3
+		          	</when>
+		          </choose>
+		            AND CATEGORY_NAME = 'ACC') AS CATEGORY_ACC
+		       FROM DUAL
+	</select>
+	
+</mapper>

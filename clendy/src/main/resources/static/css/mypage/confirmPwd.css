@@ -1,0 +1,65 @@
+div {
+    borde: 1px solid black;
+}
+
+.outer {
+    width: 980px;
+    height: 500px;
+}
+
+.info {
+	margin: auto;
+	margin-top: 20px;
+	margin-bottom: 25px;
+	width: 200px;
+	text-align: center;
+	font-size : x-large;
+	font-weight: bold;
+	padding: 10px;
+	border-bottom : 3px solid #060032;
+}
+
+.content {
+	padding: 30px;
+	width: 770px;
+	margin:auto;
+	border-bottom: 2px solid #060032;
+}
+
+ul {
+	list-style-type :square ;
+}
+
+.title {
+    width: 200px;
+    margin: auto;
+    margin-top: 50px;
+    font-size: large;
+    font-weight: bold;
+}
+
+.input {
+    width: 200px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 200px;
+    height: 25px;
+}
+
+.btn {
+    width: 90px;
+    margin: auto;
+}
+
+button {
+    background-color: #060032;
+    color: white;
+    border: none;
+    font-size: large;
+    width: 90px;
+    height: 35px;
+}

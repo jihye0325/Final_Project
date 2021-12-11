@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> 
+    <!-- csrf -->
+    <meta name="_csrf" th:content="${_csrf.token}">
+	<meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link href="/css/mypage/orderInfo.css" rel="stylesheet"></link>
+    <title>주문상세내역</title>
+</head>
+<body>
+    <div class="outer">
+    	
+        <div class="title">주문상세내역</div>
+        
+        <div class="delivery_info">
+        	<span id="subtitle">배송지정보</span>
+        	<hr>
+       		<span class="del">수령인</span>
+       		<span th:text="${p.order_name}"></span>
+       		<br>
+       		<span class="del">연락처</span>
+       		<span th:text="${p.order_phone}"></span>
+       		<br>
+       		<span class="del">배송지</span>
+       		<span th:text="${p.order_address}"></span>
+       		<br>
+       		<span class="info" id="memo">배송메모</span>
+       		<span th:text="${p.order_request}"></span>
+        </div>
+        
+        <div class="pay">
+        	<span id="subtitle">주문정보</span>
+        	<hr>
+        	<span class="payinfo">주문상품</span>
+       		<span th:text="|${p.p_name} / 옵션 : ${p.p_color}, ${p.p_size}|"></span>
+       		<br>
+       	    <span class="payinfo">주문금액</span>
+       		<span th:text="|${p.pay_money}원|"></span>
+       		<br>
+        	<span class="info" id="pinfo">포인트 사용</span>
+        	<span th:text="|${p.point}원|"></span>
+        </div>
+        
+        <div class="payment">
+        	<span id="subtitle">결제정보</span>
+        	<hr>
+        	<span class="info">결제번호</span>
+        	<span th:text="${p.pay_code}"></span>
+        	<br>
+            <span class="info">결제가격</span>
+            <span th:text="|${p.pay_money}원|"></span>
+            <br>
+            <span class="info">결제수단</span>
+            <span th:text="${p.pay_card_name}"></span>
+            <br>
+            <span class="info">카드번호</span>
+            <span th:text="${p.pay_card_num}"></span>
+        </div>
+		
+		<div class="point">
+			<span id="subtitle">포인트 적립 예정</span>
+			<hr>
+			<span class="info">구매적립</span>
+			<span th:text="|${p.pay_money * p.point_amount / 100}원 적립|"></span>
+			<br>
+			<span class="info">리뷰적립</span>
+			<span>리뷰 등록시 200원 적립</span>
+		</div>
+        <div class="btn_area">
+            <button type="button" onclick="cancle()">확인</button>
+        </div>
+    </div>
+    
+    <script>
+		function cancle(){
+			window.close();
+		}
+    </script>
+</body>
+</html>

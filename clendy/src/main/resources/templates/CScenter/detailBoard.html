@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://www.thymeleaf.org"
+                xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 상세</title>
+	<!-- jQuery -->
+     <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+	<!-- csrf -->
+    <meta name="_csrf" th:content="${_csrf.token}">
+	<meta name="_csrf_header" th:content="${_csrf.headerName}">
+	<!-- 썸머노트 -->
+	<script src="/css/summernote/summernote-lite.js"></script>
+	<script src="/css/summernote/lang/summernote-ko-KR.js"></script>
+	<link rel="stylesheet" href="/css/summernote/summernote-lite.css">
+	<!-- CSS -->
+	<link rel="stylesheet" href="/css/CScenter/detailBoard.css">
+<!-- 수정, 등록 성공여부 알림창 -->
+	<script>
+		const msg = '[[${ msg }]]';
+		
+		if(msg){
+			alert(msg);
+		}
+	</script>
+</head>
+<body>
+    <div th:replace="common/header.html"></div>
+
+    <div id="wrapper">
+        <div id="sidebar">
+            <ul>
+                <li><a class="sideA " href="/CScenter/FAQ">FAQ</a></li>
+                <li><a class="sideA current" href="/CScenter/board">공지사항</a></li>
+                <li><a class="sideA" href="/CScenter/personalQ">1:1문의</a></li>
+            </ul>
+        </div>
+        <div id="content">
+            <h3 id="content-title">공지사항</h3><h6>Notice</h6>
+        
+            <div class="board-detail">
+            	<div class="each-wrapper" th:each="b : ${board}">
+	                <div class="detail-title" >
+	                	<input type="hidden" class="b_no" name="b_no" th:value="${b.b_no}">
+	                    <div class="title-wrapper"><label class="title">제목</label>
+	                    <label class="name" th:text="${b.b_title}"></label></div>
+	                    <div class="date-wrapper"><label class="title">등록일</label>
+	                    <label class="enroll-date" th:text="${#dates.format(b.b_enroll_date, 'yyyy-MM-dd')}"></label></div>
+	                </div>
+	                <div class="board-content">
+						<label class="detail" th:utext=${b.b_content}></label>
+	                </div>
+				</div>
+            </div>
+            <div class="btn-area">
+                <a type="button" class="to-list" href="/CScenter/board">목록</a>
+                <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                <input type="button" class="modify" value="수정">
+                <input type="button" id="delete" class="delete" value="삭제">
+                </th:block>
+            </div>            
+        </div>
+
+    </div>
+
+    
+    <div th:replace="common/footer.html"></div>
+    
+    <script>
+    /* 공지사항 삭제 */
+    $(".delete").click(function(){
+    	var b_no = $(".b_no").val();
+    	location.href="/CScenter/board/delete?b_no="+b_no;
+    });
+    
+    /* 공지사항 수정 */
+    $(".modify").click(function(){
+    	var b_no = $(".b_no").val();
+    	location.href="/CScenter/board/modify?b_no="+b_no;
+    });
+    </script>
+    
+ 
+    
+</body>
+</html>

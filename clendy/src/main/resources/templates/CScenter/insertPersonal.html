@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1:1문의 등록</title>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+	<!-- 썸머노트 -->
+	<script src="/css/summernote/summernote-lite.js"></script>
+	<script src="/css/summernote/lang/summernote-ko-KR.js"></script>
+	<link rel="stylesheet" href="/css/summernote/summernote-lite.css"> 
+	<!-- CSS -->
+    <link href="/css/CScenter/insertPersonal.css" rel="stylesheet">
+    </head>
+    <body>
+        <div th:replace="common/header.html"></div>
+    
+        <div id="wrapper">
+            <div id="sidebar">
+                <ul>
+                    <li><a class="sideA " href="/CScenter/FAQ">FAQ</a></li>
+               		<li><a class="sideA " href="/CScenter/board">공지사항</a></li>
+                	<li><a class="sideA current" href="/CScenter/personalQ">1:1문의</a></li>
+                </ul>
+            </div>
+            <div id="content">
+                <h3 id="content-title">1:1문의</h3><h6>1:1 Q&A</h6>
+            	
+            	<form th:action="@{/CScenter/personalQ/insertQuestion}" method="post">
+                <div class="question-detail">
+                    <div class="detail-title">
+                        <div class="title-wrapper"><label class="title">제목</label>
+                        <input class="name" name="p_title" type="text" maxlength="20" required></div>
+                        <div class="category-wrapper"><label class="title">카테고리</label>
+                            <select name="qc_no">
+                            <option value="1">주문</option>
+                            <option value="2">배송</option>
+                            <option value="3">교환/반품</option>
+                            <option value="4">적립금/쿠폰</option>
+                            <option value="5">회원관련</option>
+                          </select></div>
+                    </div>
+                    <div class="question-content">
+						<textarea id="summernote" name="p_content"></textarea>
+                    </div>
+                </div>
+    
+                <div class="btn-area">
+                    <input type="button" class="to-list" value="목록">
+                    <input type="submit" class="insert" value="등록">
+                </div>
+                </form>
+            </div>
+    
+        </div>
+    
+        
+        <div th:replace="common/footer.html"></div>
+        
+        
+    <script>
+    $('#summernote').summernote({
+	    	width: 850,
+	        height: 340,                
+	        minHeight: null,            
+	        maxHeight: null,             
+	        focus: true,
+	        lang: "ko-KR",
+	        toolbar: [
+			    ['fontname', ['fontname']],
+			    ['fontsize', ['fontsize']],
+			    ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
+			    ['color', ['forecolor','color']],
+			    ['table', ['table']],
+			    ['para', ['ul', 'ol', 'paragraph']],
+			    ['height', ['height']],
+			    ['insert',['picture','link','video']],
+			    ['view', ['fullscreen', 'help']]
+			  ],
+			fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+			fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']
+
+    	});
+	    </script>
+    
+</body>
+</html>

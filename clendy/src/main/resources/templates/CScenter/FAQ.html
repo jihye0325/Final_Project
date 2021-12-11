@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://www.thymeleaf.org"
+                xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ</title>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <!-- csrf 토큰 -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	<link rel="stylesheet" href="/css/CScenter/FAQ.css">
+	<link rel="stylesheet" href="/css/common/sidebar.css">
+	<!-- 수정, 등록 성공여부 알림창 -->
+	<script>
+		const msg = '[[${ msg }]]';
+		
+		if(msg){
+			alert(msg);
+		}
+	</script>
+</head>
+<body>
+    <div th:replace="common/header.html"></div>
+
+    <div id="wrapper">
+        <div id="sidebar">
+            <ul>
+                <li><a class="sideA current" href="/CScenter/FAQ">FAQ</a></li>
+                <li><a class="sideA " href="/CScenter/board">공지사항</a></li>
+                <li><a class="sideA" href="/CScenter/personalQ">1:1문의</a></li>
+            </ul>
+        </div>
+        <div id="content">
+            <h3 id="title">FAQ</h3><h6>자주 묻는 질문</h6>
+            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+            <div id="insertBtn">
+                <a id="insertFAQ" href="/CScenter/insertFAQ">등록</a>
+            </div>
+            </th:block>
+            <div id="searchArea">
+            	<form th:action="@{/CScenter/FAQ/search}" method="post">
+	                <input type="text" id="searchFAQ" name="keyword" placeholder="제목, 내용 검색">
+	                <button type="submit" id="finding">
+	                <img style="width :23px; "src="/images/magnifying-glass-navy.png"></button>
+            	</form>
+            </div>   
+            
+            <div id="category">
+                <ul id="categoryUl">
+                    <li><label>주문</label></li>
+                    <li><label>배송</label></li>
+                    <li><label>교환/환불</label></li>
+                    <li><label>포인트</label></li>
+                    <li><label>회원관련</label></li>
+                </ul>
+            </div> 
+            
+            <div id="FAQList">
+                <div class="title"><ul><li class="FAQ_num">번호</li><li class="FAQ_content">내용</li></ul></div>
+               		 <th:block th:if="${#lists.size(faqList) == 0}">
+                	<div class="qna-detail-wrapper null" >
+	            		<span>FAQ가 존재하지 않습니다.</span>
+	            	</div>
+                	</th:block>
+                	<th:block th:if="${#lists.size(faqList) > 0}">
+                    <div class="qna-detail-wrapper" >
+	                	<div class="qna-detail" th:each="faq, i : ${faqList}">
+	                	<form th:action="@{/CScenter/FAQ/modify}" method="post">
+	                	<input type="hidden" name="q_no" id="q_no" th:value=${faq.q_no}>
+		                <div class=" question">
+		                	<ul><li class="FAQ_num" th:text= "${i.count}"></li>
+		                	<li class="FAQ_content cursor" id="q_title"><span th:text="${faq.q_title}"></span></li></ul></div>
+		                <div class="answer-wrapper">
+		                <p class="answer" th:utext="${#strings.replace(faq.q_answer, enter, '&lt;br&gt;')}"></p>
+		                    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+		                    <div class="btnArea">
+		                    <button type="button" class="mOrd modify">수정</button>
+		                    <button type="button" class="mOrd delete">삭제</button>
+		                    </div>
+		                    </th:block>
+		                </div>
+		                </form>
+		                </div>
+                	</div>
+	                </th:block>
+           
+            </div>
+        </div>
+    </div>    
+
+    <div th:replace="common/footer.html"></div>
+
+    <script>
+    	/* faq 답변 클릭 시 슬라이드 효과 */
+    	$(document).on('click', '.question', function(){  
+    		if(!$(this).hasClass('modifying')){
+	            if($(this).next().css('display') == 'none'){
+	                $(this).next().slideUp();
+	                $(this).next().slideDown();
+	            }else if($(this).next().css('display') == 'block'){
+	                $(this).next().slideUp();
+	            }  	
+    		}
+        });
+    	
+    	/* 검색시 검색keyword 체크*/
+    	$("#finding img").click(function(){
+    	if($("#searchFAQ").val() == ""){
+    		alert("검색어를 입력해주세요.");
+    		return false;
+    	}
+    });
+    	$("#searchFAQ").keydown(function(key) {
+    		if (key.keyCode == 13) {
+	    		if($("#searchFAQ").val() == ""){
+	        		alert("검색어를 입력해주세요.");
+	        		return false;
+	        	}
+    		}
+    	});
+
+    	
+    	/* 카테고리 별 faq 리스트 출력 */
+    	$(document).on('click', '#categoryUl li', function(){
+
+    		var category = $(this).text();
+    		var categoryCode = 0;
+    		
+    		if(category == "주문") categoryCode=1;
+    		else if (category == "배송") categoryCode=2;
+    		else if (category == "교환/환불") categoryCode=3;
+    		else if (category == "포인트") categoryCode=4;
+    		else if (category == "회원관련") categoryCode=5;
+    		
+    		location.href="/CScenter/FAQ/category?categoryCode="+categoryCode;
+		
+    	});
+    	
+    	/* faq 삭제 */
+    	$(document).on('click', '.delete', function(){
+    		var q_no = $(this).parent().parent().prev().prev().val();
+    		var token = $("meta[name='_csrf']").attr("content");
+    		var header = $("meta[name='_csrf_header']").attr("content");
+    		
+    		$.ajax({
+				url : "/CScenter/FAQ/delete",
+				type : "post",
+				data : {q_no:q_no},
+				beforeSend : function(xhr)
+	            {   /*데이터를 전송하기 전에 헤더에 csrf값을 설정한다*/
+					xhr.setRequestHeader(header, token);
+	            },
+
+			 	success : function(result){
+				if( result == 0){
+					alert("FAQ 삭제에 실패하였습니다.");
+					
+				}else{
+					alert("FAQ가 삭제되었습니다.");
+					location.reload();
+				}
+			},
+			error : function(e){
+				console.log(e);
+			}
+			});
+    	});
+    	
+    	/* faq 수정 - textarea 로 변경 */
+    	$(document).on('click', '.modify', function(){
+    		var question = $(this).parent().parent().prev().children().children().children();
+            var answer = $(this).parent().prev();
+            var questionBefore = question.text();
+            var answerBefore = answer.text();
+            
+            $(this).parent().parent().prev().addClass("modifying");
+            console.log($(this).parent().parent().prev())
+            
+            $(this).parent().html("<input type='submit' class='complete' style='margin-right: 5px; border:0; background-color: lightgray; width : 65px; height : 25px;' value='수정완료'>");
+            
+            question.replaceWith('<textarea id="q_title" name="q_title" class="modifying" style="width:640px; resize:none;">'+questionBefore+'</textarea>');
+            answer.replaceWith('<textarea name="q_answer" style="width: 640px; height: 80px; resize:none; margin-top:10px; margin-left:119px;">'+answerBefore+'</textarea>');
+
+    	});   	
+    </script>       
+</body>
+</html>

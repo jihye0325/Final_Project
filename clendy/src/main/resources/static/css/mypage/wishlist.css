@@ -1,0 +1,115 @@
+div {
+    borde: 1px solid black;
+}
+
+.wishlist {
+    width: 1000px;
+    margin: auto;
+    min-height: 500px;
+}
+
+.title{
+    width: 1000px;
+    margin: auto;
+    font-size: x-large;
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 3px solid black;
+    margin-bottom: 30px;
+}
+
+.wish_type {
+	margin-top:20px;
+	width: 140px;
+	display: flex;
+	font-size: small;
+    cursor: pointer;
+    justify-content: space-between;
+    color: gray;
+    align-items: self-end;
+}
+
+.nowish{
+	width: 120px;
+	margin-bottom: 20px;
+}
+
+.null {
+	width: 950px;
+	text-align: center;
+	font-size: x-large;
+	font-weight: bold;
+	align-self: center;
+}
+
+.wish_div {
+    display: grid;
+    grid-template-columns: repeat(3, 300px);
+    gap: 20px;
+    padding: 0px;
+}
+
+.wish_list {
+	list-style:none;
+}
+
+.p_info {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 10px;
+}
+
+.p_info div {
+    margin-bottom: 5px;
+}
+
+.product_in {
+	display: flex;
+}
+
+.name {
+    font-weight: bold;
+}
+
+#delete {
+    background-color: white;
+    border: 1px solid lightgray;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    width: 40px;
+	height: 20px;
+	cursor:pointer;
+	float: right;
+}
+
+.wish_list a:link{
+    color: black;
+    text-decoration: none;
+}
+
+.wish_list a:visited{
+    color: black;
+    text-decoration: none;
+}
+
+.wish_list a:hover{
+    cursor: pointer;
+}
+
+img {
+	width:100px;
+}
+
+/* 페이징 css */
+
+ul {
+	list-style: none;
+}
+
+.pagaing_wrap ul.pagaing_num li a:link{
+    text-decoration: none;
+}
+
+.pagaing_wrap ul.pagaing_num li a:visited{
+    text-decoration: none;
+}

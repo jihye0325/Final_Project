@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+     xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <title>header</title>
+<style>
+*{ margin : 0; padding : 0; }
+.wrapper {background-color : #060032}
+.white{ color:white; padding-left:5px; text-decoration: none;}
+/* top */
+.logoArea{ height: 65px;}
+#logoA { width : 250px; padding-left: 40px; display: inline-block;}
+#logo { width: 200px;}
+#img_wrapper { width: 30px; height: 30px; border-radius: 5px; display:inline-block; transform: translateY(10%); cursor: pointer;}
+.searchArea {display:inline-block;   top: 50%;  transform: translateY(-50%);}
+#searchItem{ resize: none; height: 30px; border : none;}
+.finding{ width: 25px; vertical-align: text-bottom; margin-left: 1px;}
+.header-btnArea .btn { padding-left: 10px;}
+.header-btnArea{ text-align: right;  padding-top: 25px; padding-right: 39px;}
+/* nav */
+#unisex:hover { color: #F80E0E;}
+#men:hover { color : #FE9B06;}
+#women:hover { color : #FFEB00; }
+#review:hover { color : #26C826; } 
+#cs:hover { color : #3877F1; }
+#mypage:hover { color : #DF65F3; }
+#nav-wrapper{  padding-bottom: 10px; padding-top: 30px; margin-bottom:70px; height: 70px;}
+.a-wrapper a{ text-decoration : none; padding-left : 10px;}
+.a-wrapper{ width : 830px; margin:0 auto; display:flex; text-align: center;}
+.nav{ font-weight: bold; font-size: 20px; margin: 30px;}
+</style>
+<script>
+let	jq = jQuery.noConflict();
+function searchForm(){
+	jq(".searchProductForm").submit();
+}
+</script>
+</head>
+<body>
+    <div class="wrapper">
+        <div id="top">
+            <div class="header-btnArea">
+            	<!-- 로그인 전 -->
+            	<th:block sec:authorize="isAnonymous()">
+                <a class="btn white" id="login" href="/member/login">로그인</a>
+                <a class="btn white" id="join" href="/member/signUp">회원가입</a>
+                </th:block>
+                <!-- 로그인 후 -->
+                <th:block sec:authorize="isAuthenticated()">
+			      <label class="white" sec:authentication="principal.user_name"></label><span class="white">님</span>
+			      <a class="btn white" href='/mypage/cart'>장바구니</a>
+			      <a class="btn white" href='/mypage/orderList'>주문조회</a>
+			      <a class="btn white" href='/member/logout'>로그아웃</a>
+			   </th:block>
+                
+            </div>
+            <div class="logoArea">
+                <a id="logoA" href="/mainpage"><img id="logo" src="/images/logo-white.png" alt="logo"></a>
+                <div class="searchArea">
+                	<form class="searchProductForm" th:action="@{/searchProduct}" method="post">
+                    <input id="searchItem" name="keyword" type="text" placeholder="상품명,카테고리 검색"></input>
+                    <span id="img_wrapper">
+                    <img class="finding" onclick="searchForm();" src="/images/magnifying-glass-white.png" alt="finding">
+                    </span>
+                	</form>
+                </div>
+            </div>
+        </div>
+        <div id="nav-wrapper">
+        	<div class="a-wrapper">
+            <a class="nav white" id="unisex" th:href="@{/product/list/{type}(type='public', page=1, align='hot', category='all')}">공용</a>
+            <a class="nav white" id="men" th:href="@{/product/list/{type}(type='man', page=1, align='hot', category='all')}">남성</a>
+            <a class="nav white" id="women" th:href="@{/product/list/{type}(type='woman', page=1, align='hot', category='all')}">여성</a>
+            <a class="nav white" id="review" href="/review/review">리뷰</a>
+            <a class="nav white" id="cs" href="/CScenter/FAQ">고객센터</a>
+            <!-- 권한에 따라 보이는 nav 달라짐 -->
+            <th:block sec:authorize="!hasRole('ROLE_ADMIN') && !hasRole('ROLE_SELLER')">
+            <a class="nav white" id="mypage" href="/mypage/modify">마이페이지</a>
+        	</th:block>
+        	<th:block sec:authorize="hasRole('ROLE_ADMIN')">
+            <a class="nav white" id="mypage" href="/admin/sellerList">관리자페이지</a>
+            </th:block>
+            <th:block sec:authorize="hasRole('ROLE_SELLER')">
+            <a class="nav white" id="mypage" href="/seller/sellerAsk">판매자페이지</a>
+            </th:block>
+        	</div>
+        </div>
+    </div>
+    
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
