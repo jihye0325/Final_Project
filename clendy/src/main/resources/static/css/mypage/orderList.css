@@ -98,26 +98,6 @@ span {
 	margin:auto;
 }
 
-.calendar {
-	display: flex;
-	margin-right: 30px;
-}
-
-select {
-	width: 100px;
-	height: 25px;
-}
-
-#search{
-	width: 50px;
-    height: 23px;
-    line-height: 23px;
-    background-color: #060032;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
 .info {
     width: 800px;
     font-size: small;
@@ -273,7 +253,7 @@ img{
     cursor: pointer;
 }
 
-/* 페이징 css */
+/* �럹�씠吏� css */
 
 ul {
 	list-style: none;

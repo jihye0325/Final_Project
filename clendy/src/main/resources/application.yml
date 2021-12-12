@@ -12,7 +12,7 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: 사용할 이메일 주소
+    username: clendy1210@gmail.com
     password: 사용할 이메일 주소의 비밀번호
     properties:
       mail:
