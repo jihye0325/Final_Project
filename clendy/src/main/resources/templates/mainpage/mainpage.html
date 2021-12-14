@@ -263,7 +263,7 @@ outline: solid 1px lightgray;
 	padding: 70px 0;
 }
 
-.findingbtn{ width: 50px; vertical-align: text-bottom; margin-left: 1px; height: 50px; background-color: #060032;}
+.findingbtn{ width: 50px; vertical-align: text-bottom; margin-left: 1px; height: 50px;}
 
 
 .searchdiv{display: inline-block; padding: 50px; width: 50%; height: 20%;}
@@ -295,8 +295,8 @@ button{border: 0; vertical-align: middle;}
 				<form class="searchProductForm1" th:action="@{/searchProduct}" method="post">
 					<input class="inputbar" type="search" name="keyword" placeholder="상품명,카테고리 검색">
 					<span id="img-wrapper1">
-             			<button style="">
-             				<img class="findingbtn" onclick="searchForm1();" src="/images/magnifying-glass-white.png" alt="finding">
+             			<button>
+             				<img class="findingbtn" onclick="searchForm1();" src="/images/search.png" alt="finding">
              			</button>
             		</span>
 				</form>
