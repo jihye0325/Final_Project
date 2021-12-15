@@ -436,6 +436,7 @@ public class MypageController {
 		
 		mv.addObject("p_qna_list", resultList.get("p_qna_list"));
 		mv.addObject("pi", resultList.get("pi"));
+		System.out.println(resultList.get("p_qna_list"));
 		
 		mv.setViewName("mypage/myBoard_pqna");
 		return mv;

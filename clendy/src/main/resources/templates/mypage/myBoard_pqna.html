@@ -60,11 +60,18 @@
 		                	<div class="q_content">
 		                		<textarea th:text="${p.p_i_q_content}" readonly></textarea>
 		                		<div class="detail_area">
+     			                     <div class="btn_box">
+                                        <div>
+                                            <a href="javascript:;" th:onclick="|javascript:qnaModifyView(${p.p_i_q_code})|">수정</a>
+                                        </div>
+                                        <div>
+                                        	<a href="javascript:;" th:onclick="|javascript:qnaDelete(${p.p_i_q_code})|">삭제</a>
+                                        </div>
+                                    </div>
 		                			<div class="q_date"> 
-		          
-		                			<span th:text="|작성일 ${#dates.format(p.p_i_q_create_date, 'yyyy-MM-dd')}|"></span>
-		                			<span th:text="|수정일 ${#dates.format(p.p_i_q_modify_date, 'yyyy-MM-dd')}|"></span>
-		                		</div>
+			                			<span th:text="|작성일 ${#dates.format(p.p_i_q_create_date, 'yyyy-MM-dd')}|"></span>
+			                			<span th:text="|수정일 ${#dates.format(p.p_i_q_modify_date, 'yyyy-MM-dd')}|"></span>
+		                			</div>
 		                		</div>
 		                	</div>
 		                </div>
@@ -187,6 +194,40 @@
     	$(".ex_ref").on("click", function(){
     		location.href="/mypage/myBoard_exchange";
     	});  
+    </script>
+    
+    <script>
+	 // 상품문의 삭제
+	    function qnaDelete(piqCode){
+    		var token = $("meta[name='_csrf']").attr("content");
+    		var header = $("meta[name='_csrf_header']").attr("content"); 
+		 
+	       if(confirm("상품 문의글을 삭제하시겠습니까?")){
+	           $.ajax({
+	               type : "post",
+	               url : "/product/qnaDelete",
+	                  dataType : "text",
+	               contentType : "application/json; charset=utf-8",
+	               data : JSON.stringify(piqCode),
+	               beforeSend : function(xhr){
+	    				xhr.setRequestHeader(header, token);
+	    			},
+	               success : function(data){
+	                   
+	                   if(data == 'success'){
+	                          alert("상품 문의글이 삭제 되었습니다.");
+	                          location.reload();
+	                   }else{
+	                          alert("상품 문의글 삭제 실패 하였습니다.");
+	                   }
+	               },
+	               error : function(error){
+	                   console.log(error);
+	               }
+	               
+	           })	
+	       }
+	    }							
     </script>
 </body>
 </head>

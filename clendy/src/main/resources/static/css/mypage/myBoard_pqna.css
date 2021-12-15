@@ -104,7 +104,6 @@ div {
     width: 120px;
 }
 
-/* 슬라이드 부분 */ 
 .slide_area img {
 	width: 35px;
 	height: 35px;
@@ -135,7 +134,6 @@ div {
 
 .q_date {
 	font-size : small;
-	text-align: end;
 }
 
 textarea {
@@ -185,7 +183,32 @@ textarea {
     cursor: pointer;
 }
 
-/* 페이징 css */
+.detail_area {
+	display:flex;
+	justify-content: space-between;
+}
+
+.btn_box{
+	display:flex;
+	width: 120px;
+	justify-content: space-around;
+	font-size : small;
+}
+
+.btn_box div a:link{
+    color: black;
+    text-decoration: none;
+}
+
+.btn_box div a:visited{
+    color: black;
+    text-decoration: none;
+}
+
+.btn_box div a:hover{
+    cursor: pointer;
+}
+
 
 ul {
 	list-style: none;
