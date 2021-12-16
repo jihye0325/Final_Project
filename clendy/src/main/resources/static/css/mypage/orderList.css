@@ -253,7 +253,10 @@ img{
     cursor: pointer;
 }
 
-/* �럹�씠吏� css */
+select {
+	background-color:transparent;
+	font-size:15px;
+}
 
 ul {
 	list-style: none;
