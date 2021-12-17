@@ -12,6 +12,7 @@ public class ProductQnaQ {
 	private String p_name;
 	private String p_i_q_title;
 	private String p_i_q_content;
+	private String p_i_q_secret;
 	private Date p_i_q_create_date;
 	private Date p_i_q_modify_date;
 	

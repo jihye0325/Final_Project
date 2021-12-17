@@ -235,6 +235,7 @@
 		<result property="p_name" column="P_NAME"/>
 		<result property="p_i_q_title" column="P_I_Q_TITLE"/>
 		<result property="p_i_q_content" column="P_I_Q_CONTENT"/>
+		<result property="p_i_q_secret" column="P_I_Q_SECRET"/>
 		<result property="p_i_q_create_date" column="P_I_Q_CREATE_DATE"/>
 		<result property="p_i_q_modify_date" column="P_I_Q_MODIFY_DATE"/>
 		<association property="productQnaA" resultMap="productQnaAresultMap"/>
