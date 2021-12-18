@@ -58,6 +58,7 @@
 		                <div class="question">
 		                	<input type="hidden" id="p_i_q_code" th:value="${p.p_i_q_code}" />
 							<input type="hidden" id="p_i_cate_code" th:value="${p.p_i_cate_code}" />	
+							<input type="hidden" id="p_i_q_secret" th:value="${p.p_i_q_secret}" />	
 		                	<img class="q_img" src="/images/qnaQ.png">
 		                	<div class="q_content">
 		                		<p>제목</p><textarea id="q_title" th:text="${p.p_i_q_title}" readonly></textarea>
@@ -250,13 +251,20 @@
                   $("#q_title").removeAttr("readonly");
                   $("#q_content").val(data.piqContent);
                   $("#q_content").removeAttr("readonly");
+                  $("#q_title").focus();
                   
                   $('#modifyQna').on('click', function(){
                  	   var token = $("meta[name='_csrf']").attr("content");
                    	   var header = $("meta[name='_csrf_header']").attr("content"); 
                    		
-                       const piqTitle = $("#productQna [name=piqTitle]").val();
-                       const piqContent = $("#productQna [name=piqContent]").val(); 
+                       const piqSecret = $("#p_i_q_secret").val();
+                       const piCateCode = $("#p_i_cate_code").val();
+                       const piqTitle = $("#q_title").val();
+                       const piqContent = $("#q_content").val(); 
+                       console.log(piqSecret);
+                       console.log(piCateCode);
+                       console.log(piqTitle);
+                       console.log(piqContent);
                        
                         if(piqTitle.length <= 0){
                     	   	alert("제목을 입력해주세요.");
@@ -281,9 +289,10 @@
                     		},
                            success : function(data){
                                if(data == 'success'){
-                                   alertPopup("상품 문의글이 수정 되었습니다.");
+                                   alert("상품 문의글이 수정 되었습니다.");
+                                   location.reload();
                                }else if(data == 'fail'){
-                                   alertPopup("상품 문의글이 수정 실패 하였습니다.");
+                                   alert("상품 문의글이 수정 실패 하였습니다.");
                                }
                                
                            },
@@ -306,10 +315,10 @@
    		var token = $("meta[name='_csrf']").attr("content");
    		var header = $("meta[name='_csrf_header']").attr("content"); 
    		
-       const piqSecret = $("#productQna [name=piqSecret]").val();
-       const piCateCode = $("#productQna [name=piCateCode]").val();
-       const piqTitle = $("#productQna [name=piqTitle]").val();
-       const piqContent = $("#productQna [name=piqContent]").val(); 
+       const piqSecret = $("#p_i_q_secret").val();
+       const piCateCode = $("#p_i_cate_code").val();
+       const piqTitle = $("#q_title").val();
+       const piqContent = $("#q_content").val(); 
        
         if(piqTitle.length <= 0){
     	   	alert("제목을 입력해주세요.");

@@ -707,6 +707,7 @@
 	            , P_I_Q_CONTENT
 	            , P_I_Q_CREATE_DATE
 	            , P_I_Q_MODIFY_DATE
+	            , P_I_Q_SECRET
 	            , P_I_A_CODE
 	            , P_I_A_CONTENT
 	            , P_I_A_CREATE_DATE
