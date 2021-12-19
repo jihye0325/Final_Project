@@ -21,8 +21,8 @@ public class ProductQnaQ {
 	public ProductQnaQ() {}
 
 	public ProductQnaQ(int p_i_q_code, String p_i_cate_code, String p_i_cate_name, int p_no, String p_name,
-			String p_i_q_title, String p_i_q_content, Date p_i_q_create_date, Date p_i_q_modify_date,
-			ProductQnaA productQnaA) {
+			String p_i_q_title, String p_i_q_content, String p_i_q_secret, Date p_i_q_create_date,
+			Date p_i_q_modify_date, ProductQnaA productQnaA) {
 		super();
 		this.p_i_q_code = p_i_q_code;
 		this.p_i_cate_code = p_i_cate_code;
@@ -31,6 +31,7 @@ public class ProductQnaQ {
 		this.p_name = p_name;
 		this.p_i_q_title = p_i_q_title;
 		this.p_i_q_content = p_i_q_content;
+		this.p_i_q_secret = p_i_q_secret;
 		this.p_i_q_create_date = p_i_q_create_date;
 		this.p_i_q_modify_date = p_i_q_modify_date;
 		this.productQnaA = productQnaA;
@@ -92,6 +93,14 @@ public class ProductQnaQ {
 		this.p_i_q_content = p_i_q_content;
 	}
 
+	public String getP_i_q_secret() {
+		return p_i_q_secret;
+	}
+
+	public void setP_i_q_secret(String p_i_q_secret) {
+		this.p_i_q_secret = p_i_q_secret;
+	}
+
 	public Date getP_i_q_create_date() {
 		return p_i_q_create_date;
 	}
@@ -120,8 +129,7 @@ public class ProductQnaQ {
 	public String toString() {
 		return "ProductQnaQ [p_i_q_code=" + p_i_q_code + ", p_i_cate_code=" + p_i_cate_code + ", p_i_cate_name="
 				+ p_i_cate_name + ", p_no=" + p_no + ", p_name=" + p_name + ", p_i_q_title=" + p_i_q_title
-				+ ", p_i_q_content=" + p_i_q_content + ", p_i_q_create_date=" + p_i_q_create_date
-				+ ", p_i_q_modify_date=" + p_i_q_modify_date + ", productQnaA=" + productQnaA + "]";
+				+ ", p_i_q_content=" + p_i_q_content + ", p_i_q_secret=" + p_i_q_secret + ", p_i_q_create_date="
+				+ p_i_q_create_date + ", p_i_q_modify_date=" + p_i_q_modify_date + ", productQnaA=" + productQnaA + "]";
 	}
-	
 }

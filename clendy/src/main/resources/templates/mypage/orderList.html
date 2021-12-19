@@ -10,6 +10,11 @@
     <!-- csrf 토큰 -->
     <meta name="_csrf" th:content="${_csrf.token}"/>
 	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	<!-- Date Range Picker -->
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <title>주문내역</title>
 </head>
 <body>
@@ -46,12 +51,9 @@
     		</div>
     		 
     		<div class="search_area">
-	        	<select>
-	        		<option>기간선택</option>
-	        	</select>
-	        	<select>
-	        		<option>기간선택</option>
-	        	</select>
+	        	<div class="searchDate">
+	        		<input type="text" id="searchDate" name="searchDate" value="" />
+	        	</div>
 	        	<select>
 	        		<option>결제완료</option>
 	        		<option>배송중</option>
@@ -333,7 +335,7 @@
 			
 			var token = $("meta[name='_csrf']").attr("content");
     		var header = $("meta[name='_csrf_header']").attr("content"); 
-			
+			  
 		    $.ajax({
 		        url: "/mypage/canclePay", // 예: http://www.myservice.com/payments/cancel
 		        type: 'post',
@@ -362,6 +364,11 @@
 		        }
 		      });
 		}
+	</script>
+	
+	<!-- 기간 검색 -->
+	<script>
+		$('#searchDate').daterangepicker();  
 	</script>
 </body>
 </html>
