@@ -164,5 +164,35 @@ public interface MypageMapper {
 	Wishlist selectWishlist(Map<String, Object> mapMapper);
 
 	int cancle_usePoint(String merchant_uid_Value);
+
+	int cnt_searchDate_oList(Map<String, Object> map);
+
+	List<Product_Order> searchDate_Product_Order(Map<String, Object> mapMapper);
+
+	int searchDate_Del_cnt(Map<String, Object> map2);
+
+	int searchDate_Del_Complete_cnt(Map<String, Object> map2);
+
+	int searchDate_Cancle_cnt(Map<String, Object> map2);
+
+	int cnt_searchDateStatus_oList(Map<String, Object> map);
+
+	List<Product_Order> searchDateStatus_Product_Order(Map<String, Object> mapMapper);
+
+	int searchDateStatus_Del_cnt(Map<String, Object> map2);
+
+	int searchDateStatus_Del_Complete_cnt(Map<String, Object> map2);
+
+	int searchDateStatus_Cancle_cnt(Map<String, Object> map2);
+
+	int cnt_searchStatus_oList(Map<String, Object> map);
+
+	List<Product_Order> searchStatus_Product_Order(Map<String, Object> mapMapper);
+
+	int searchStatus_Del_cnt(Map<String, Object> map2);
+
+	int searchStatus_Del_Complete_cnt(Map<String, Object> map2);
+
+	int searchStatus_Cancle_cnt(Map<String, Object> map2);
 	
 }

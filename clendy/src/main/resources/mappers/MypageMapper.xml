@@ -1420,6 +1420,291 @@
     	   WHERE ROWN BETWEEN #{startRow} AND #{endRow}	
 	</select>
 	
+	<!-- 기간검색 주문내역 개수 -->
+	<select id="cnt_searchDate_oList" parameterType="map" resultType="_int">
+		SELECT 
+	    	COUNT(*)
+	    FROM PRODUCT_ORDER
+	   WHERE USER_NO = #{ user_no } 
+	     AND ORDER_CREATE_DATE BETWEEN #{ start_date } AND #{ end_date }
+	</select>
+	
+	<!-- 기간검색 주문내역 조회 -->
+	<select id="searchDate_Product_Order" parameterType="map" resultMap="order_option_listResultMap">
+		SELECT
+				*
+			FROM (
+			SELECT
+		ROWNUM ROWN
+	  , TBL.*
+	  FROM(
+	  SELECT
+			 PRODUCT_ORDER.USER_NO, 
+			 P_NO,
+		     P_NAME,
+		     P_COLOR,
+		     P_SIZE,
+		     P_PRICE,
+		     P_DISCOUNT,
+		     ORDER_ALL_PRICE,
+		     ORDER_PRODUCT_NUM,
+		     ORDER_CODE,
+		     MERCHANT_UID,
+		     PAY_MONEY,
+		     ORDER_OPTION_CODE,
+		     ORDER_NAME,
+		     ORDER_ADDRESS,
+		     ORDER_PHONE,
+		     ORDER_CREATE_DATE,
+		     ORDER_STATUS_NAME,
+		     ROUTE,
+		     IMG_R_NAME,
+		     R_NO,
+		     R_STATUS
+		  FROM PRODUCT_ORDER
+		  JOIN ORDER_OPTION USING(ORDER_CODE)
+		  JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+		  JOIN PRODUCT USING(P_NO)
+		  JOIN PRODUCT_IMAGE USING(P_NO)
+		  JOIN IMAGE USING(IMG_NO)
+		  JOIN ORDER_DEL_INFO USING(ORDER_CODE)
+		  JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+		  LEFT JOIN REVIEW USING(ORDER_OPTION_CODE)
+		  JOIN PAYMENT USING(ORDER_CODE)
+		 WHERE PRODUCT_ORDER.USER_NO = #{ user_no }
+		   AND IMG_LEVEL = 0
+		   AND ORDER_CREATE_DATE BETWEEN #{ start_date } AND #{ end_date }
+		 ORDER BY ORDER_CODE DESC) TBL)
+		 	WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 배송중 상품 개수 -->
+	<select id="searchDate_Del_cnt" parameterType="map" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_CREATE_DATE BETWEEN #{ start_date } AND #{ end_date }
+		  AND ORDER_STATUS_CODE = (SELECT ORDER_STATUS_CODE FROM ORDER_STATUS WHERE ORDER_STATUS_NAME = '배송중')
+	</select>
+	
+	<!-- 배송완료 상품 개수 -->
+	<select id="searchDate_Del_Complete_cnt" parameterType="map" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_CREATE_DATE BETWEEN #{ start_date } AND #{ end_date }
+		  AND ORDER_STATUS_CODE = (SELECT ORDER_STATUS_CODE FROM ORDER_STATUS WHERE ORDER_STATUS_NAME = '배송완료')
+	</select>
+	
+	<!-- 취소/반품 상품 개수 -->
+	<select id="searchDate_Cancle_cnt" parameterType="map" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_CREATE_DATE BETWEEN #{ start_date } AND #{ end_date }
+		  AND ORDER_STATUS_CODE IN (SELECT ORDER_STATUS_CODE 
+                                    FROM ORDER_STATUS 
+                                   WHERE ORDER_STATUS_NAME IN ('환불신청','교환신청', '환불완료', '교환완료', '결제취소'))
+	</select>
+	
+	<!-- 기간&상태 검색 -->
+	<select id="cnt_searchDateStatus_oList" parameterType="map" resultType="_int">
+      SELECT 
+	    	COUNT(*)
+	    FROM PRODUCT_ORDER
+        JOIN ORDER_OPTION USING(ORDER_CODE)
+        JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+	   WHERE USER_NO = #{ user_no }
+	     AND ORDER_CREATE_DATE BETWEEN #{ start_date } AND #{ end_date }
+         AND ORDER_STATUS_NAME = #{ order_status }
+	</select>
+	
+	<select id="searchDateStatus_Product_Order" parameterType="map" resultMap="order_option_listResultMap">
+		SELECT
+				*
+			FROM (
+			SELECT
+		ROWNUM ROWN
+	  , TBL.*
+	  FROM(
+	  SELECT
+			 PRODUCT_ORDER.USER_NO, 
+			 P_NO,
+		     P_NAME,
+		     P_COLOR,
+		     P_SIZE,
+		     P_PRICE,
+		     P_DISCOUNT,
+		     ORDER_ALL_PRICE,
+		     ORDER_PRODUCT_NUM,
+		     ORDER_CODE,
+		     MERCHANT_UID,
+		     PAY_MONEY,
+		     ORDER_OPTION_CODE,
+		     ORDER_NAME,
+		     ORDER_ADDRESS,
+		     ORDER_PHONE,
+		     ORDER_CREATE_DATE,
+		     ORDER_STATUS_NAME,
+		     ROUTE,
+		     IMG_R_NAME,
+		     R_NO,
+		     R_STATUS
+		  FROM PRODUCT_ORDER
+		  JOIN ORDER_OPTION USING(ORDER_CODE)
+		  JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+		  JOIN PRODUCT USING(P_NO)
+		  JOIN PRODUCT_IMAGE USING(P_NO)
+		  JOIN IMAGE USING(IMG_NO)
+		  JOIN ORDER_DEL_INFO USING(ORDER_CODE)
+		  JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+		  LEFT JOIN REVIEW USING(ORDER_OPTION_CODE)
+		  JOIN PAYMENT USING(ORDER_CODE)
+		 WHERE PRODUCT_ORDER.USER_NO = #{ user_no }
+		   AND IMG_LEVEL = 0
+		   AND ORDER_CREATE_DATE BETWEEN #{ start_date } AND #{ end_date }
+		   AND ORDER_STATUS_NAME = #{ order_status }	
+		 ORDER BY ORDER_CODE DESC) TBL)
+		 	WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="searchDateStatus_Del_cnt" parameterType="map" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		 JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_CREATE_DATE BETWEEN #{ start_date } AND #{ end_date }
+		  AND ORDER_STATUS_CODE = (SELECT ORDER_STATUS_CODE FROM ORDER_STATUS WHERE ORDER_STATUS_NAME = '배송중')
+		  AND ORDER_STATUS_NAME = #{ order_status }
+	</select>
+	
+	<select id="searchDateStatus_Del_Complete_cnt" parameterType="map" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		 JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_CREATE_DATE BETWEEN #{ start_date } AND #{ end_date }
+		  AND ORDER_STATUS_CODE = (SELECT ORDER_STATUS_CODE FROM ORDER_STATUS WHERE ORDER_STATUS_NAME = '배송완료')
+		  AND ORDER_STATUS_NAME = #{ order_status }
+	</select>
+	
+	<select id="searchDateStatus_Cancle_cnt" parameterType="map" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		 JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_CREATE_DATE BETWEEN #{ start_date } AND #{ end_date }
+		  AND ORDER_STATUS_NAME = #{ order_status }
+		  AND ORDER_STATUS_CODE IN (SELECT ORDER_STATUS_CODE 
+                                    FROM ORDER_STATUS 
+                                   WHERE ORDER_STATUS_NAME IN ('환불신청','교환신청', '환불완료', '교환완료', '결제취소'))
+	</select>
+	
+	<!-- 주문상태 검색 -->
+	<select id="cnt_searchStatus_oList" parameterType="map" resultType="_int">
+	   SELECT 
+	    	COUNT(*)
+	    FROM PRODUCT_ORDER
+        JOIN ORDER_OPTION USING(ORDER_CODE)
+        JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+	   WHERE USER_NO = #{ user_no }
+         AND ORDER_STATUS_NAME = #{ order_status }
+	</select>
+	
+	<select id="searchStatus_Product_Order" parameterType="map" resultMap="order_option_listResultMap">
+		SELECT
+					*
+				FROM (
+				SELECT
+			ROWNUM ROWN
+		  , TBL.*
+		  FROM(
+		  SELECT
+				 PRODUCT_ORDER.USER_NO, 
+				 P_NO,
+			     P_NAME,
+			     P_COLOR,
+			     P_SIZE,
+			     P_PRICE,
+			     P_DISCOUNT,
+			     ORDER_ALL_PRICE,
+			     ORDER_PRODUCT_NUM,
+			     ORDER_CODE,
+			     MERCHANT_UID,
+			     PAY_MONEY,
+			     ORDER_OPTION_CODE,
+			     ORDER_NAME,
+			     ORDER_ADDRESS,
+			     ORDER_PHONE,
+			     ORDER_CREATE_DATE,
+			     ORDER_STATUS_NAME,
+			     ROUTE,
+			     IMG_R_NAME,
+			     R_NO,
+			     R_STATUS
+			  FROM PRODUCT_ORDER
+			  JOIN ORDER_OPTION USING(ORDER_CODE)
+			  JOIN PRODUCT_OPTION USING(P_OPTION_NO)
+			  JOIN PRODUCT USING(P_NO)
+			  JOIN PRODUCT_IMAGE USING(P_NO)
+			  JOIN IMAGE USING(IMG_NO)
+			  JOIN ORDER_DEL_INFO USING(ORDER_CODE)
+			  JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+			  LEFT JOIN REVIEW USING(ORDER_OPTION_CODE)
+			  JOIN PAYMENT USING(ORDER_CODE)
+			 WHERE PRODUCT_ORDER.USER_NO = #{ user_no }
+			   AND IMG_LEVEL = 0
+			   AND ORDER_STATUS_NAME = #{ order_status }	
+			 ORDER BY ORDER_CODE DESC) TBL)
+			 	WHERE ROWN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="searchStatus_Del_cnt" parameterType="map" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		 JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_STATUS_CODE = (SELECT ORDER_STATUS_CODE FROM ORDER_STATUS WHERE ORDER_STATUS_NAME = '배송중')
+		  AND ORDER_STATUS_NAME = #{ order_status }
+	</select>
+	
+	<select id="searchStatus_Del_Complete_cnt" parameterType="map" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		 JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_STATUS_CODE = (SELECT ORDER_STATUS_CODE FROM ORDER_STATUS WHERE ORDER_STATUS_NAME = '배송완료')
+		  AND ORDER_STATUS_NAME = #{ order_status }
+	</select>
+	
+	<select id="searchStatus_Cancle_cnt" parameterType="map" resultType="_int">
+		SELECT
+		    COUNT(*)
+		 FROM ORDER_OPTION
+		 JOIN PRODUCT_ORDER USING(ORDER_CODE)
+		 JOIN ORDER_STATUS USING(ORDER_STATUS_CODE)
+		WHERE USER_NO = #{ user_no }
+		  AND ORDER_STATUS_NAME = #{ order_status }
+		  AND ORDER_STATUS_CODE IN (SELECT ORDER_STATUS_CODE 
+                                    FROM ORDER_STATUS 
+                                   WHERE ORDER_STATUS_NAME IN ('환불신청','교환신청', '환불완료', '교환완료', '결제취소'))
+	</select>
 </mapper>
 
 

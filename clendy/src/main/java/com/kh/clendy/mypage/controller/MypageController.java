@@ -786,6 +786,63 @@ public class MypageController {
 	    int result = mypageService.canclePay(merchant_uid_Value);
 		return result;
 	}
+	
+	// 기간+상태 검색
+	@PostMapping("/searchDateOrderList")
+	public ModelAndView searchDateOrderList(ModelAndView mv, HttpServletRequest request, @RequestParam(defaultValue="1") int page) {
+		UserImpl user = (UserImpl)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		int user_no = user.getUser_no();
+		String start_date = request.getParameter("start_date");
+		String end_date = request.getParameter("end_date");
+		String order_status = request.getParameter("order_status");
+		
+		if(start_date != null && end_date != null && order_status.equals("null")) {
+			Map<String, Object> resultList = mypageService.searchDate_Product_Order(user_no, start_date, end_date, page);
+
+			mv.addObject("start_date", start_date);
+			mv.addObject("end_date", end_date);
+			mv.addObject("po_list", resultList.get("po_list"));
+			mv.addObject("pi", resultList.get("pi"));
+			mv.addObject("del_cnt", resultList.get("del_cnt"));
+			mv.addObject("del_complete_cnt", resultList.get("del_complete_cnt"));
+			mv.addObject("cancle_cnt", resultList.get("cancle_cnt"));
+			
+		} else if (start_date != null && end_date != null && !order_status.equals("null")){
+			Map<String, Object> resultList = mypageService.searchDateStatus_Product_Order(user_no, start_date, end_date, order_status, page);
+			
+			mv.addObject("start_date", start_date);
+			mv.addObject("end_date", end_date);
+			mv.addObject("order_status", order_status);
+			mv.addObject("po_list", resultList.get("po_list"));
+			mv.addObject("pi", resultList.get("pi"));
+			mv.addObject("del_cnt", resultList.get("del_cnt"));
+			mv.addObject("del_complete_cnt", resultList.get("del_complete_cnt"));
+			mv.addObject("cancle_cnt", resultList.get("cancle_cnt"));
+			
+		} else if (start_date == null && end_date == null && !order_status.equals("null")) {
+			Map<String, Object> resultList = mypageService.searchStatus_Product_Order(user_no, order_status, page);
+			
+			mv.addObject("order_status", order_status);
+			mv.addObject("po_list", resultList.get("po_list"));
+			mv.addObject("pi", resultList.get("pi"));
+			mv.addObject("del_cnt", resultList.get("del_cnt"));
+			mv.addObject("del_complete_cnt", resultList.get("del_complete_cnt"));
+			mv.addObject("cancle_cnt", resultList.get("cancle_cnt"));
+		} else {
+			
+			Map<String, Object> resultList = mypageService.selectProduct_Order(user_no, page);
+			
+			mv.addObject("po_list", resultList.get("po_list"));
+			mv.addObject("pi", resultList.get("pi"));
+			mv.addObject("del_cnt", resultList.get("del_cnt"));
+			mv.addObject("del_complete_cnt", resultList.get("del_complete_cnt"));
+			mv.addObject("cancle_cnt", resultList.get("cancle_cnt"));
+			mv.setViewName("/mypage/orderList");
+		}
+		
+		mv.setViewName("/mypage/orderList");
+		return mv;
+	}
 }
 
 

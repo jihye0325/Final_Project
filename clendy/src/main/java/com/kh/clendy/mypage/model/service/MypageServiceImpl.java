@@ -620,4 +620,155 @@ public class MypageServiceImpl implements MypageService {
 		return mypageMapper.reviewDelete(order_option_code);
 	}
 
+	// 주문내역 기간검색
+	@Override
+	public Map<String, Object> searchDate_Product_Order(int user_no, String start_date, String end_date, int page) {
+		// 주문 내역 개수
+		Map<String, Object> map = new HashMap<>();
+		map.put("user_no", user_no);
+		map.put("start_date", start_date);
+		map.put("end_date", end_date);
+		int listCount = mypageMapper.cnt_searchDate_oList(map);
+		
+		// 페이징
+		PageInfo pageInfo = new PageInfo(page, listCount, 10, 10);
+		
+		// 목록 호출에 필요한 값
+		int startRow = (pageInfo.getPage()-1) * pageInfo.getBoardLimit() + 1;
+		int endRow = startRow + pageInfo.getBoardLimit() -1;
+		
+		// 목록 호출에 넘기는 값
+		Map<String, Object> mapMapper = new HashMap<>();
+		mapMapper.put("page", page);
+		mapMapper.put("startRow", startRow);
+		mapMapper.put("endRow", endRow);
+		mapMapper.put("user_no", user_no);
+		mapMapper.put("start_date", start_date);
+		mapMapper.put("end_date", end_date);
+		
+		// 주문내역 목록 조회
+		List<Product_Order> po_list = mypageMapper.searchDate_Product_Order(mapMapper);
+		// 배송중인 상품의 개수
+		Map<String, Object> map2 = new HashMap<>();
+		map2.put("user_no", user_no);
+		map2.put("start_date", start_date);
+		map2.put("end_date", end_date);
+		int del_cnt = mypageMapper.searchDate_Del_cnt(map2);
+		// 배송완료 개수
+		int del_complete_cnt = mypageMapper.searchDate_Del_Complete_cnt(map2);
+		// 취소/반품 개수
+		int cancle_cnt = mypageMapper.searchDate_Cancle_cnt(map2);
+		
+		Map<String, Object> result = new HashMap<>();
+		result.put("po_list", po_list);
+		result.put("pi", pageInfo);
+		result.put("del_cnt", del_cnt);
+		result.put("del_complete_cnt", del_complete_cnt);
+		result.put("cancle_cnt", cancle_cnt);
+		
+		return result;
+	}
+
+	// 주문내역 기간 + 상태 검색
+	@Override
+	public Map<String, Object> searchDateStatus_Product_Order(int user_no, String start_date, String end_date,
+			String order_status, int page) {
+		// 주문 내역 개수
+		Map<String, Object> map = new HashMap<>();
+		map.put("user_no", user_no);
+		map.put("start_date", start_date);
+		map.put("end_date", end_date);
+		map.put("order_status", order_status);
+		int listCount = mypageMapper.cnt_searchDateStatus_oList(map);
+		
+		// 페이징
+		PageInfo pageInfo = new PageInfo(page, listCount, 10, 10);
+		
+		// 목록 호출에 필요한 값
+		int startRow = (pageInfo.getPage()-1) * pageInfo.getBoardLimit() + 1;
+		int endRow = startRow + pageInfo.getBoardLimit() -1;
+		
+		// 목록 호출에 넘기는 값
+		Map<String, Object> mapMapper = new HashMap<>();
+		mapMapper.put("page", page);
+		mapMapper.put("startRow", startRow);
+		mapMapper.put("endRow", endRow);
+		mapMapper.put("user_no", user_no);
+		mapMapper.put("start_date", start_date);
+		mapMapper.put("end_date", end_date);
+		mapMapper.put("order_status", order_status);
+		
+		// 주문내역 목록 조회
+		List<Product_Order> po_list = mypageMapper.searchDateStatus_Product_Order(mapMapper);
+		
+		// 배송중인 상품의 개수
+		Map<String, Object> map2 = new HashMap<>();
+		map2.put("user_no", user_no);
+		map2.put("start_date", start_date);
+		map2.put("end_date", end_date);
+		map2.put("order_status", order_status);
+		int del_cnt = mypageMapper.searchDateStatus_Del_cnt(map2);
+		// 배송완료 개수
+		int del_complete_cnt = mypageMapper.searchDateStatus_Del_Complete_cnt(map2);
+		// 취소/반품 개수
+		int cancle_cnt = mypageMapper.searchDateStatus_Cancle_cnt(map2);
+		
+		Map<String, Object> result = new HashMap<>();
+		result.put("po_list", po_list);
+		result.put("pi", pageInfo);
+		result.put("del_cnt", del_cnt);
+		result.put("del_complete_cnt", del_complete_cnt);
+		result.put("cancle_cnt", cancle_cnt);
+		
+		return result;
+	}
+
+	// 주문 상태 검색
+	@Override
+	public Map<String, Object> searchStatus_Product_Order(int user_no, String order_status, int page) {
+		// 주문 내역 개수
+		Map<String, Object> map = new HashMap<>();
+		map.put("user_no", user_no);
+		map.put("order_status", order_status);
+		int listCount = mypageMapper.cnt_searchStatus_oList(map);
+
+		// 페이징
+		PageInfo pageInfo = new PageInfo(page, listCount, 10, 10);
+		
+		// 목록 호출에 필요한 값
+		int startRow = (pageInfo.getPage()-1) * pageInfo.getBoardLimit() + 1;
+		int endRow = startRow + pageInfo.getBoardLimit() -1;
+		
+		// 목록 호출에 넘기는 값
+		Map<String, Object> mapMapper = new HashMap<>();
+		mapMapper.put("page", page);
+		mapMapper.put("startRow", startRow);
+		mapMapper.put("endRow", endRow);
+		mapMapper.put("user_no", user_no);
+		mapMapper.put("order_status", order_status);
+		
+		// 주문내역 목록 조회
+		List<Product_Order> po_list = mypageMapper.searchStatus_Product_Order(mapMapper);
+		
+		// 배송중인 상품의 개수
+		Map<String, Object> map2 = new HashMap<>();
+		map2.put("user_no", user_no);
+		map2.put("order_status", order_status);
+		int del_cnt = mypageMapper.searchStatus_Del_cnt(map2);
+		
+		// 배송완료 개수
+		int del_complete_cnt = mypageMapper.searchStatus_Del_Complete_cnt(map2);
+		// 취소/반품 개수
+		int cancle_cnt = mypageMapper.searchStatus_Cancle_cnt(map2);
+		
+		Map<String, Object> result = new HashMap<>();
+		result.put("po_list", po_list);
+		result.put("pi", pageInfo);
+		result.put("del_cnt", del_cnt);
+		result.put("del_complete_cnt", del_complete_cnt);
+		result.put("cancle_cnt", cancle_cnt);
+		
+		return result;
+	}
+
 }

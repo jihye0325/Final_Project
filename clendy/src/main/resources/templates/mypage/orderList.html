@@ -50,24 +50,6 @@
   					<div id="count" th:text="${cancle_cnt}"></div>
     			</div>
     		</div>
-    		 
-    		<div class="search_area">
-    			<form class="searchDate" th:action="@{/searchOrderList}" method="post">
-		        	<div class="searchDate">
-		        		<input type="text" id="searchDate" name="searchDate" value="" />
-		        		<button type="button" id="searchBtn">검색</button>
-		        	</div>
-	        	</form>
-	        	<select>
-	        		<option>결제완료</option>
-	        		<option>배송중</option>
-	        		<option>배송완료</option>
-	        		<option>구매확정</option>
-	        		<option>주문취소</option>
-	        		<option>교환완료</option>
-	        		<option>환불완료</option>
-	        	</select>
-       		</div>
     	</div>
     	
         <div class="info">
@@ -77,6 +59,30 @@
             주문일로부터 7일이 지나면 자동으로 구매확정 됩니다.
             </p>
         </div>
+        
+        <div class="search_area">
+			<form class="searchDateForm" th:action="@{/mypage/searchDateOrderList}" method="post">
+	      		<div class="searchDate">
+	      			<input type="text" id="searchDate" name="searchDate" value=""/>
+	      			<input type="hidden" id="start_date" th:if="${start_date}" th:value="${start_date}">
+	      			<input type="hidden" id="end_date" th:if="${end_date}" th:value="${end_date}">
+	      		</div>
+	     	</form>
+	     	
+	     	<select id="order_status" name="order_status">
+	     		<option value="null">주문상태</option>
+	     		<option value="결제완료" th:selected="${order_status} == '결제완료'">결제완료</option>
+	     		<option value="배송중" th:selected="${order_status} == '배송중'">배송중</option>
+	     		<option value="배송완료" th:selected="${order_status} == '배송완료'">배송완료</option>
+	     		<option value="구매확정" th:selected="${order_status} == '구매확정'">구매확정</option>
+	     		<option value="결제취소" th:selected="${order_status} == '결제취소'">결제취소</option>
+	     		<option value="교환완료" th:selected="${order_status} == '교환완료'">교환완료</option>
+	     		<option value="환불완료" th:selected="${order_status} == '환불완료'">환불완료</option>
+	     	</select>
+	     	
+	     	<button type="button" id="searchBtn">조회</button>
+	      	<button type="button" id="origin_list" onclick="order_list()">초기화</button>
+   		</div>
 
         <div class="order_list">
             <ul class="ul_header">
@@ -373,6 +379,8 @@
 	<!-- 기간 검색 -->
 	<script>
 		$(function () {
+			var start_date = $("#start_date").val();
+			var end_date = $("#end_date").val();
             $('#searchDate').daterangepicker({
                 "locale": {
                     "format": "YYYY-MM-DD",
@@ -387,16 +395,62 @@
                     "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
                     "firstDay": 1
                 },
-                "startDate": "2021-12-10",
+                "startDate": start_date,
+                "endDate": end_date,
                 "drops": "down"
+                
             }, function (start, end, label) {
-                console.log('New date range selected: ' + start.format('YYYY/MM/DD') + ' to ' + end.format('YYYY/MM/DD'));
                 $("#searchBtn").on("click", function(){
-                	alert('ㅎㅎ');
+                	var search_form = document.querySelector('.searchDateForm');
+                	var start_date = start.format('YYYY/MM/DD');
+                	var end_date = end.format('YYYY/MM/DD');
+                	var order_status = $("#order_status option:selected").val();
+                	
+                	var input1 = document.createElement('input');
+                	var input2 = document.createElement('input');
+                	var input3 = document.createElement('input');
+                	
+                	input1.setAttribute("type", "text"); 
+            		input1.setAttribute("name", "start_date"); 
+            		input1.setAttribute("value", start_date); 
+            		
+                	input2.setAttribute("type", "text"); 
+            		input2.setAttribute("name", "end_date"); 
+            		input2.setAttribute("value", end_date); 
+            		
+                	input3.setAttribute("type", "text"); 
+            		input3.setAttribute("name", "order_status"); 
+            		input3.setAttribute("value", order_status); 
+            		
+            		search_form.appendChild(input1);
+            		search_form.appendChild(input2);
+            		search_form.appendChild(input3);
+            		search_form.submit();
                 });
             });
         });
+		
+        $("#searchBtn").on("click", function(){
+        	var search_form = document.querySelector('.searchDateForm');
+        	var order_status = $("#order_status option:selected").val();
+        	var input1 = document.createElement('input');
+	    		
+           	input1.setAttribute("type", "text"); 
+       		input1.setAttribute("name", "order_status"); 
+       		input1.setAttribute("value", order_status); 
+       		
+       		search_form.appendChild(input1);
+       		search_form.submit();
+        });
 	</script>
+	
+	<!-- 검색 초기화 -->
+	<script>
+		function order_list(){
+			location.href="/mypage/orderList";
+		}
+	</script>
+	
 </body>
 </html>
 

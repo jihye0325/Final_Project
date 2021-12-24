@@ -98,6 +98,13 @@ public interface MypageService{
 
 	int reviewDelete(int order_option_code);
 
+	Map<String, Object> searchDate_Product_Order(int user_no, String start_date, String end_date, int page);
+
+	Map<String, Object> searchDateStatus_Product_Order(int user_no, String start_date, String end_date,
+			String order_status, int page);
+
+	Map<String, Object> searchStatus_Product_Order(int user_no, String order_status, int page);
+
 	
 
 }

@@ -93,10 +93,34 @@ span {
 
 .search_area {
 	display: flex;
-	width: 280px;
-	justify-content: space-between;
 	margin:auto;
+	justify-content: right;
+	margin-bottom : 5px;
 }
+
+#searchDate {
+	height : 25px;
+	margin-right : 5px;
+	padding : 5px;
+}
+
+select {
+	font-size:15px;
+	margin-right : 5px;
+	padding : 5px;
+}
+
+#searchBtn {
+	margin-right : 5px;
+}
+
+.search_area button {
+    width: 50px;
+    color: white;
+    cursor: pointer;
+    background-color: #060032;
+    border: none;
+} 
 
 .info {
     width: 800px;
@@ -251,11 +275,6 @@ img{
 
 .pname a:hover{
     cursor: pointer;
-}
-
-select {
-	background-color:transparent;
-	font-size:15px;
 }
 
 ul {
