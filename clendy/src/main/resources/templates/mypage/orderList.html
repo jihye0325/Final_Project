@@ -93,6 +93,7 @@
                 <li class="pstatus">주문상태</li>
             </ul>
 
+			<th:block th:if="${#lists.size(po_list) > 0}">
             <ul class="ul_content" th:each="p : ${po_list}">
                 <li class="pname">
                 	<a th:href="@{'/product/view/' + ${p.p_no}}">
@@ -151,6 +152,13 @@
                     </div>
                 </li>
             </ul>
+            </th:block>
+            <th:block th:if="${#lists.size(po_list) == 0}">
+                 <div class="null_order">
+                	<img id="null" src="/images/nowish.png">
+                	<div>주문내역이 없습니다</div>
+                </div>
+            </th:block>
         </div>
             <!-- 페이징 -->
             <div class="pagaing_wrap" th:if="${#lists.size(po_list) > 0}">

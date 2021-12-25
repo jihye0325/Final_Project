@@ -277,6 +277,19 @@ img{
     cursor: pointer;
 }
 
+.null_order {
+  	margin-top : 45px;
+  	text-align : center;
+  	font-weight: bold;
+  	font-size : x-large;
+  	margin-bottom : 45px;
+  }
+  
+#null {
+  	width:120px;
+  	margin-bottom: 20px;
+  }
+
 ul {
 	list-style: none;
 }
