@@ -69,15 +69,6 @@ span{
     width: 400px;
 }
 
-.login_api button {
-    width: 400px;
-    height: 40px;
-    font-weight: bold;
-    font-size: large;
-    cursor: pointer;
-    border: none;
-}
-
 .api_img {
     vertical-align: middle;
     margin-right: 10px;
@@ -85,17 +76,45 @@ span{
 
 #kakaoLogin {
     background-color: #ffeb00;
+    color: #422525;
     width: 400px;
-    height: 40px;
+    height: 45px;
     font-weight: bold;
     font-size: large;
     cursor: pointer;
     border: none;
+    display: flex;
+    padding: 5px;
+    padding-left: 120px;
 }
 
-[name="naver"]{
+#kakaoLogin div {
+	height: 45px;
+	line-height: 2;
+}
+
+#naverLogin {
+    width: 400px;
     background-color: #26C826;
     color: white;
+    height: 45px;
+    font-weight: bold;
+    font-size: large;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    padding: 5px;
+    padding-left: 120px;
+    margin-top: -21px;
+}
+
+#naverLogin div {
+	height: 45px;
+	line-height: 2;
+}
+
+#naver_img {
+	padding-bottom: 5px;
 }
 
 a :hover {
@@ -136,7 +155,7 @@ a :hover {
     text-decoration: none;
 }
 
-/* 체크박스 색상 변경 */
+/* 泥댄겕諛뺤뒪 �깋�긽 蹂�寃� */
 input[type="checkbox"] {
     cursor: pointer;
     -webkit-appearance: none;
